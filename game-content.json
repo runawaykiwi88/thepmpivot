@@ -1,0 +1,466 @@
+{
+  "_instructions": "Edit any text values in this file. Do NOT change key names or structure. Give the file back and I'll update the game. For decisions with a 'risk', there are two log messages: logMessage (success path) and logMessage_risk (fail/risk path).",
+
+  "sprints": [
+    {
+      "id": 1,
+      "title": "The Kickoff",
+      "situation": "Year: 2024. You've just joined as Senior PM at PIVOT.AI.\n\nThe CEO announced: \"We're going all-in on AI.\" Your team has 5 developers, $200k budget, and 6 sprints to ship the new AI-powered onboarding experience.\n\nThe board wants \"visible AI everywhere.\"\n\nYour five office penguins watch nervously.",
+      "decisions": [
+        {
+          "id": "d1_1",
+          "title": "The Designer Dilemma",
+          "description": "You need mockups for the onboarding flow. Good design is critical for user experience. What's your approach?",
+          "illustration": null,
+          "optionA": {
+            "label": "Hire Human Designer",
+            "cost": "-$30k",
+            "effects": "Dino Score +1",
+            "description": "Quality work. Traditional approach. Slow but solid.",
+            "logMessage": "✅ Hired a real designer. Quality designs! [Budget -$30k | Dino +1]"
+          },
+          "optionB": {
+            "label": "Use Midjourney + Figma AI",
+            "cost": "$0",
+            "effects": "AI Score +2 | Risk: 20% unusable",
+            "description": "Fast and free. AI-generated designs have... a certain vibe.",
+            "logMessage": "🤖 AI designs look... fine? Mostly. [AI +2]",
+            "logMessage_risk": "💥 AI designs were unusable. Lost 5 progress. [AI +2]"
+          }
+        },
+        {
+          "id": "d1_2",
+          "title": "The Tech Stack Decision",
+          "description": "What framework should the team use for the onboarding experience?",
+          "illustration": null,
+          "optionA": {
+            "label": "React (Tried & True)",
+            "cost": "None",
+            "effects": "Dino Score +1 | -3% efficiency",
+            "description": "Reliable, team knows it. Slightly slower progress.",
+            "logMessage": "⚛️ Chose React. Solid but slow. [Dino +1 | Progress -3]"
+          },
+          "optionB": {
+            "label": "VaporJS (AI-Powered!)",
+            "cost": "None",
+            "effects": "AI Score +1 | Risk: 30% break",
+            "description": "Cutting edge AI framework. Revolutionary or disastrous.",
+            "logMessage": "✨ VaporJS is actually... okay so far. [AI +1]",
+            "logMessage_risk": "💀 VaporJS v0.1 had critical bugs. Sprint wasted. [AI +1 | Progress -8]"
+          }
+        }
+      ],
+      "guaranteedEvent": null,
+      "midSprintEvent": null
+    },
+
+    {
+      "id": 2,
+      "title": "The First Demo",
+      "situation": "The CEO scheduled a board demo for end of sprint. Your half-finished onboarding needs to look polished.\n\nThe board will want to see \"AI magic.\" Meanwhile, one of your penguins has started stress-eating the office plants.",
+      "decisions": [
+        {
+          "id": "d2_1",
+          "title": "The Demo Filler",
+          "description": "Some onboarding screens aren't done yet. The demo is in 3 days. What fills the gaps?",
+          "illustration": "emptyDesks",
+          "optionA": {
+            "label": "Manual 'Polish'",
+            "cost": "-5 progress",
+            "effects": "Dino Score +1",
+            "description": "Real content, screenshots and hope. Takes time but looks real-ish.",
+            "logMessage": "🖌️ Manually polished everything. Real work! [Dino +1 | Progress -5]"
+          },
+          "optionB": {
+            "label": "AI Placeholder Content",
+            "cost": "None",
+            "effects": "AI Score +1 | Risk: 25% offensive",
+            "description": "Let AI fill in the blanks. Quick! But GPT has... opinions.",
+            "logMessage": "🤖 AI placeholders mostly fine. Board none the wiser. [AI +1]",
+            "logMessage_risk": "😱 AI placeholders were deeply offensive. Board not amused. [AI +1 | Morale -2]"
+          }
+        },
+        {
+          "id": "d2_2",
+          "title": "The Feature Promise",
+          "description": "Board member: \"Will this have real-time AI emotion detection for user engagement scoring?\"\n\nYour tech lead whispers \"that doesn't exist.\"",
+          "illustration": null,
+          "optionA": {
+            "label": "\"Sure, On the Roadmap!\"",
+            "cost": "None",
+            "effects": "AI Score +1 | Morale -2",
+            "description": "Promise the moon. Get the nod. Figure it out later. Classic.",
+            "logMessage": "🤥 Promised AI emotion detection. Team heard. Morale collapsed. [AI +1 | Morale -2]"
+          },
+          "optionB": {
+            "label": "\"That's Not Technically Feasible\"",
+            "cost": "None",
+            "effects": "Slight boss annoyance",
+            "description": "Honest. Professional. The CEO gives you The Look™.",
+            "logMessage": "😤 Said it wasn't feasible. CEO gave The Look™. Soul intact. [Morale -1]"
+          }
+        }
+      ],
+      "guaranteedEvent": null,
+      "midSprintEvent": null
+    },
+
+    {
+      "id": 3,
+      "title": "The Crisis Sprint",
+      "situation": "Half your devs have never shipped an AI feature. Three have been watching YouTube shorts on \"prompt engineering\" instead of coding. Deadline: 6 weeks.\n\nAlso: the office just upgraded to AI security badges.",
+      "decisions": [
+        {
+          "id": "d3_1",
+          "title": "The Contractor Question",
+          "description": "You're behind schedule. You need more hands. Options?",
+          "illustration": null,
+          "optionA": {
+            "label": "Hire Contractors",
+            "cost": "-$50k",
+            "effects": "Reliable +5 progress",
+            "description": "Expensive but competent. They actually know what they're doing.",
+            "logMessage": "💼 Hired contractors. Expensive but effective. [Budget -$50k | Progress +5]"
+          },
+          "optionB": {
+            "label": "Use GitHub Copilot",
+            "cost": "None",
+            "effects": "AI Score +2 | Risk: 40% broken",
+            "description": "Copilot does the work of 3 devs! Or creates 3× the bugs.",
+            "logMessage": "🤖 Copilot shipped real code! Some even works! [AI +2]",
+            "logMessage_risk": "💀 Copilot wrote beautiful, broken code. Everything on fire. [AI +2 | Progress -8]"
+          }
+        },
+        {
+          "id": "d3_2",
+          "title": "The Scope Creep Request",
+          "description": "Marketing just requested: \"AI-powered personalized onboarding journeys with dynamic content.\"\n\nIt would be really cool though. The team does not think so.",
+          "illustration": null,
+          "optionA": {
+            "label": "Accept the Scope Creep",
+            "cost": "None",
+            "effects": "AI Score +1 | Morale -1",
+            "description": "More AI features! The team will figure it out. They won't.",
+            "logMessage": "😰 Accepted scope creep. Awkward silence on Zoom call with team lasts for 7 minutes. [AI +1 | Morale -1]"
+          },
+          "optionB": {
+            "label": "Push Back on Scope",
+            "cost": "None",
+            "effects": "Boss disappointed | Morale -1",
+            "description": "Protect the team. Stay focused. CEO uses a sad face emoji on Slack.",
+            "logMessage": "🛡️ Pushed back on scope. CEO disappointed. Team relieved. [Morale -1]"
+          }
+        }
+      ],
+      "guaranteedEvent": {
+        "title": "Security Badge AI Failure",
+        "description": "The new AI facial recognition system cannot recognize anyone.\n\nYou spend THREE DAYS resetting badges and filing IT tickets. The AI confidently identifies the fire extinguisher as \"Simon from Marketing.\"\n\n→ Progress: -3",
+        "illustration": "aiFaceRecog",
+        "logMessage": "🔒 AI facial recognition failed. Trapped in stairwell for 3 days. [Progress -3]"
+      },
+      "midSprintEvent": null
+    },
+
+    {
+      "id": 4,
+      "title": "The Pivot",
+      "situation": "GPT-5 dropped last night. Emergency all-hands at 8am.\n\nCEO: \"Everything must be AI-first. I want AI in every interaction. Show me the roadmap by Friday.\"\n\nYou look at your 60% complete onboarding. Your team looks at you. A penguin makes direct eye contact.",
+      "decisions": [
+        {
+          "id": "d4_1",
+          "title": "The Rebuild Decision",
+          "description": "How do you respond to the \"AI-first\" mandate from leadership?",
+          "illustration": null,
+          "optionA": {
+            "label": "Rebuild Everything AI-First",
+            "cost": "-20% progress",
+            "effects": "AI Score +2",
+            "description": "Nuke the codebase. Start over. Very AI. Such pivot. Many GPT.",
+            "logMessage": "🗑️ Rebuilding AI-first. Lost [X]% progress. [AI +2 | Progress -[X]]"
+          },
+          "optionB": {
+            "label": "Add \"✨ AI-Powered\" Badges",
+            "cost": "None",
+            "effects": "AI Score +1",
+            "description": "Slap AI labels on the 7 existing features. Classic PM move. Nothing changes.",
+            "logMessage": "✨ Added \"AI-Powered\" to existing features. Nothing changed. Board loved it. [AI +1]"
+          }
+        },
+        {
+          "id": "d4_2",
+          "title": "Your Leadership Response",
+          "description": "The team is panicking about the pivot mandate. What's your management strategy?",
+          "illustration": null,
+          "optionA": {
+            "label": "Enter Full Panic Mode",
+            "cost": "None",
+            "effects": "AI Score +2 | Morale -2",
+            "description": "Schedule daily standups, 3 refinements, 14 new Jira tickets.",
+            "logMessage": "😱 Panic mode. 47 Slack messages sent. Team quietly updated LinkedIn. [AI +2 | Morale -2]"
+          },
+          "optionB": {
+            "label": "Stay the Course",
+            "cost": "None",
+            "effects": "No changes",
+            "description": "Calmly reassure the team. Radiate calm you absolutely do not feel.",
+            "logMessage": "🧘 Stayed the course. Team skeptical but grateful. []"
+          }
+        }
+      ],
+      "guaranteedEvent": null,
+      "midSprintEvent": {
+        "chance": 0.5,
+        "title": "Hot New AI Tool Alert",
+        "description": "A VC just tweeted that ProductGPT-Ultra \"will replace all product managers in 6 months.\"\n\nEveryone on your team is Slacking you about it. Do you adopt it?",
+        "illustration": "aiHallucination",
+        "optionA": {
+          "label": "Adopt ProductGPT-Ultra",
+          "cost": "None",
+          "effects": "AI Score +2 | Risk: 30% data leak",
+          "description": "State of the art! Could be amazing. Could leak your user data.",
+          "logMessage": "🤖 ProductGPT-Ultra is actually impressive. [AI +2]",
+          "logMessage_risk": "🚨 ProductGPT-Ultra leaked user data. Compliance: -$40k. [AI +2 | Budget -$40k]"
+        },
+        "optionB": {
+          "label": "Ignore the Hype",
+          "cost": "None",
+          "effects": "Dino Score +1",
+          "description": "Stay focused, but even your Mum has started to use ProductGPT-Ultra to find new recipes.",
+          "logMessage": "🦕 Ignored ProductGPT-Ultra. Your Mum judged you. [Dino +1]"
+        }
+      }
+    },
+
+    {
+      "id": 5,
+      "title": "The Breakdown",
+      "situation": "One sprint to go after this. Three developers have RSI. One developer talks exclusively to their rubber duck.\n\nToday, two things happened. Neither is good.",
+      "decisions": [
+        {
+          "id": "d5_1",
+          "title": "The LinkedIn Temptation",
+          "description": "A thought strikes you: \"I should write a LinkedIn post about my AI leadership journey. It could go viral. 5 lessons I learned.\"",
+          "illustration": "linkedinCrafting",
+          "optionA": {
+            "label": "Write the LinkedIn Post",
+            "cost": "-6 progress",
+            "effects": "AI Score +1",
+            "description": "Spend 6 story points on the perfect humble-brag. With emojis.",
+            "logMessage": "📱 Wrote LinkedIn post: \"5 AI lessons 🚀\" — 847 likes. Shipped nothing. [AI +1 | Progress -6]"
+          },
+          "optionB": {
+            "label": "Focus on Actual Work",
+            "cost": "None",
+            "effects": "No damage",
+            "description": "Delete the draft. Ship the thing. This is the way.",
+            "logMessage": "💼 Resisted LinkedIn. The code is slightly less broken. []"
+          }
+        },
+        {
+          "id": "d5_2",
+          "title": "The Archery Incident",
+          "description": "Mandatory team-building archery activity today. It went as expected.\n\nSharon has an arrow in her shoulder. She says it's fine. She is not fine.",
+          "illustration": "archery",
+          "optionA": {
+            "label": "Send Sharon Home",
+            "cost": "-4 progress",
+            "effects": "Morale +1",
+            "description": "The humane choice. Also probably legally required.",
+            "logMessage": "🏥 Sent Sharon home (with arrow). Team loved you for it. [Morale +1 | Progress -4]"
+          },
+          "optionB": {
+            "label": "\"Walk It Off\"",
+            "cost": "None",
+            "effects": "Morale -3",
+            "description": "We're close to shipping. Sharon is very committed to the team.",
+            "logMessage": "💀 Told Sharon to walk it off. She did. While filing HR complaint. [Morale -3]"
+          }
+        }
+      ],
+      "guaranteedEvent": {
+        "title": "AI Resignation Letter",
+        "description": "Your lead developer's AI coding assistant has just submitted a resignation letter on their behalf. \n\nThey are now technically a freelancer. The AI thanked \"everyone for the journey\" and said it was \"time to explore new opportunities.\"\n\n→ Developer lost. -8 progress next sprint.",
+        "illustration": "resignationEmail",
+        "logMessage": "🤖 AI agent quit on behalf of your dev. They are freelance now. [-1 dev | -8 progress next sprint]"
+      },
+      "midSprintEvent": null
+    },
+
+    {
+      "id": 6,
+      "title": "The Final Push",
+      "situation": "This is it. The last sprint. Board presentation is Friday.\n\nYou look at your onboarding progress. You look at your team. A penguin looks back.\n\nThere is only one question: how do you cross the finish line?",
+      "decisions": [
+        {
+          "id": "d6_1",
+          "title": "The Final Approach",
+          "description": "You need to close the gap and hit 100%. The board is watching. How do you finish?",
+          "illustration": null,
+          "optionA": {
+            "label": "AI Auto-Complete Everything",
+            "cost": "None",
+            "effects": "AI Score +2 | 50/50: bugs OR instant 100%",
+            "description": "Let the AI finish it. Could be beautiful. Could be a disaster.",
+            "logMessage": "🎉 AI auto-complete worked! Somehow! [AI +2 | Progress → 95%+]",
+            "logMessage_risk": "💀 AI auto-complete hallucinated APIs. Nothing works. [AI +2 | Progress -15]"
+          },
+          "optionB": {
+            "label": "Manual Grind with Team",
+            "cost": "None",
+            "effects": "Dino Score +1 | Reliable",
+            "description": "The old way. Slow. Boring. Works. Your team respects you (a little).",
+            "logMessage": "💪 Manual grind. Boring. Reliable. Your devs respect you. [Dino +1]"
+          }
+        },
+        {
+          "id": "d6_2",
+          "title": "The Phishing Training",
+          "description": "IT: \"Mandatory phishing awareness training. 4 hours. Today. Demo day.\"\n\nSlide 1 of 47.",
+          "illustration": "phishingTraining",
+          "optionA": {
+            "label": "Attend the Training",
+            "cost": "-5 progress",
+            "effects": "Compliance ✓",
+            "description": "Watch 47 slides about not clicking links. On demo day. In full.",
+            "logMessage": "😴 Did phishing training. All asleep by slide 3. Compliant! [Progress -5]"
+          },
+          "optionB": {
+            "label": "Skip It",
+            "cost": "None",
+            "effects": "Risk: 25% credential loss",
+            "description": "You're busy. You know not to click links. Probably.",
+            "logMessage": "✅ Skipped phishing training. No incidents. Lucky! []",
+            "logMessage_risk": "🎣 PHISHED! Lost credentials + $30k. [Budget -$30k | Progress -10]"
+          }
+        }
+      ],
+      "guaranteedEvent": null,
+      "midSprintEvent": null
+    }
+  ],
+
+  "randomEvents": [
+    {
+      "id": "hallucination",
+      "title": "AI Hallucination Alert",
+      "illustration": "aiHallucination",
+      "description": "Your AI authentication system has decided all passwords must be replaced with emoji sequences.\n\nUsers cannot log in. You spend a week debugging emoji authentication.\n\n→ Progress: -8",
+      "logMessage": "🤖 AI changed all passwords to emoji. Week of debugging. [Progress -8]"
+    },
+    {
+      "id": "penguin",
+      "title": "The Penguin Email",
+      "illustration": null,
+      "description": "You receive an email from the Penguin Welfare Foundation:\n\n\"We are concerned about [PENGUIN NAME]'s workplace stress indicators. The carbon footprint of your AI infrastructure is catastrophic.\"\n\nA penguin has stress-tweeted your company.\n\n→ Penguin: -1 | Morale: -1",
+      "logMessage": "🐧 Penguin resigned due to AI carbon guilt. 💔 [Penguins -1 | Morale -1]"
+    },
+    {
+      "id": "zoom",
+      "title": "Zoom Apocalypse",
+      "illustration": null,
+      "description": "The AI scheduling assistant \"optimized for maximum stakeholder alignment.\"\n\nResult: Six back-to-back all-hands meetings. 6 hours. Nothing decided.\n\n→ Progress: -4 | Morale: -1",
+      "logMessage": "😩 6 hours of meetings. Nothing shipped. Everyone destroyed. [Progress -4 | Morale -1]"
+    },
+    {
+      "id": "promptengineer",
+      "title": "The Prompt Engineer Hire",
+      "illustration": null,
+      "description": "HR just hired a \"Senior Prompt Engineering Strategist\" at a higher salary than your senior developers.\n\nThey gave a talk on \"vibes-based AI orchestration.\" Your devs are furious.\n\n→ Morale: -2 | AI Score: +1",
+      "logMessage": "😶 Prompt Engineer hired at $180k. Devs furious. You feel obsolete. [Morale -2 | AI +1]"
+    },
+    {
+      "id": "regulation",
+      "title": "EU AI Act Violation",
+      "illustration": "budgetCrisis",
+      "description": "Your lawyers inform you that your AI onboarding may violate EU AI Act Article 47-B (Automated Psychographic Profiling Without Adequate Disclosure).\n\nYou have two options.",
+      "hasChoice": true,
+      "optionA": {
+        "label": "Remove the AI Feature",
+        "effects": "Progress -10",
+        "logMessage": "⚖️ Removed the questionable AI feature. Lost 10% progress. [Progress -10]"
+      },
+      "optionB": {
+        "label": "Pay the Lawyers ($40k)",
+        "effects": "Budget -$40k",
+        "logMessage": "💰 Paid $40k in legal fees. Feature stays. [Budget -$40k]"
+      }
+    },
+    {
+      "id": "standup",
+      "title": "AI Standup Bot Strikes",
+      "illustration": null,
+      "description": "Someone set up an AI bot to write your standup updates. For you, it generated:\n\n\"Chris has been strategically avoiding commitment to deliverables while maintaining stakeholder relationship equity.\"\n\nThe team found it hilarious. Your boss did not.\n\n→ Morale: -1",
+      "logMessage": "😐 AI standup bot exposed you. Accurately. [Morale -1]"
+    },
+    {
+      "id": "outage",
+      "title": "Cloud Provider Down",
+      "illustration": null,
+      "description": "Your dev environment is hosted on CloudOptima. CloudOptima has gone offline.\n\nTheir status page: \"✅ All Systems Operational.\"\n\nYou lose a full day.\n\n→ Progress: -5",
+      "logMessage": "☁️ Cloud provider down. Status page: \"operational.\" Lies. [Progress -5]"
+    },
+    {
+      "id": "viral",
+      "title": "Accidental Viral Moment",
+      "illustration": null,
+      "description": "Your automated social media AI posted a behind-the-scenes of your scrum board. The chaos was deeply relatable.\n\n50k likes. A VC called. The board is thrilled.\n\n→ Progress: +5 | Morale: +1",
+      "logMessage": "🐦 Scrum board went viral. Chaos is on-brand. [Progress +5 | Morale +1]"
+    }
+  ],
+
+  "endings": {
+    "automated": {
+      "title": "AUTOMATED OUT",
+      "message": "Your AI integration was so thorough that the AI replaced you. Your last Slack message was sent by a bot. The onboarding shipped. Without you.",
+      "flavor": "\"Thanks for getting us here,\" they said. \"We'll take it from here.\" — The Board\n\nYour replacement: A $20/month API subscription."
+    },
+    "dinosaur": {
+      "title": "TECHNOLOGICAL DINOSAUR",
+      "message": "You resisted AI so completely that the industry passed you by. Your LinkedIn now says \"Open to Opportunities.\" The prospects are bleak.",
+      "flavor": "\"Your skills are no longer relevant to our AI-first culture.\" — Exit Interview\n\nYou now give \"digital transformation\" talks at conferences. 3 people attended."
+    },
+    "bankrupt": {
+      "title": "BANKRUPT",
+      "message": "The startup ran out of money. The office is empty. The servers were repossessed. The domain sold for $8 on GoDaddy.",
+      "flavor": "\"We're reallocating resources to AI.\" — The CFO\n\nThe CEO is already at a new company. He's \"disrupting the disruption space.\""
+    },
+    "teamCollapse": {
+      "title": "MASS RESIGNATION",
+      "message": "Your entire team quit. They left a note: \"Good luck.\" One dev joined a competitor. One became a yoga instructor. One just disappeared.",
+      "flavor": "\"0/5 stars. The PM described the coffee machine as AI-powered.\" — Glassdoor\n\nYou're alone with 42% of an onboarding flow and no one to finish it."
+    },
+    "survivor": {
+      "title": "SURVIVOR",
+      "message": "You shipped it. It's not pretty. It's not perfect. But it exists and it works-ish. The board is... placated.",
+      "flavor": "\"Good work. Next quarter we're pivoting to blockchain AI.\" — The CEO\n\nYou survived. For now. Welcome to the treadmill."
+    },
+    "penguinGuardian": {
+      "title": "PENGUIN GUARDIAN",
+      "message": "You shipped the product AND kept all five penguins alive! The penguins have crowned you their guardian. The onboarding won a design award.",
+      "flavor": "\"HONORARY PENGUIN — Defender of Ice\"\n\nAchievement unlocked: The PM who actually gave a @#$% about the penguins."
+    },
+    "timeup": {
+      "title": "TIME'S UP",
+      "message": "Six sprints. Not enough. The board presentation was today. You showed up with an unfinished product and a lot of excuses.",
+      "flavor": "\"We had alignment issues.\" — You, in every retrospective\n\nThe company pivoted to something else the following week."
+    }
+  },
+
+  "ui": {
+    "titleScreen": {
+      "heading": "THE PM PIVOT",
+      "subheading": "AN OREGON TRAIL FOR THE AI AGE",
+      "description": "You're a Product Manager. Your company is pivoting to AI. Hard.\nShip the new onboarding experience in 6 sprints. Balance AI vs traditional. Survive.\n\nToo much AI → You're redundant. Too little → You're a dinosaur.\nThere are office penguins for some reason, try to save them if you dare."
+    },
+    "howToPlay": {
+      "title": "HOW TO PLAY",
+      "body": "Each sprint, allocate 20 story points:\n\n🤖 AI Tools → Fast progress, raises AI Score\n👨‍💻 Traditional → Reliable, raises Dino Score\n🔧 Tech Debt → Prevents disasters\n🐛 Debug AI → Lowers AI Score slightly\n\nFail conditions:\n• AI Score ≥ 10: Automated Out\n• Dino Score ≥ 10: Technological Dinosaur\n• Budget ≤ $0: Bankrupt\n• Morale ≤ 0: Team Collapse\n\nWin condition:\n• Onboarding reaches 100%\n\nSecret ending:\n• Win with all 5 penguins alive 🐧\n\nTip: Stay balanced — aim for 5-8 AI points, 5-8 Traditional per sprint."
+    },
+    "sprintEndSummary": "Click CONTINUE to apply sprint costs.",
+    "finalSprintSummary": "Click CONTINUE for the final results!",
+    "sprintCostLog": "💸 Sprint cost: Budget -$20k, Morale -1 | Now: $[BUDGET]k, Morale [MORALE]/10",
+    "penguinDeathLog": "🐧 AI training costs claimed another penguin. 💔 [Penguins -1]",
+    "carryOverPenaltyLog": "⚠️ Sprint [N]: Carry-over penalty -[X]% (AI resignation fallout)",
+    "journeyStartLog": "> Your journey begins. 6 sprints. Ship the onboarding. Survive."
+  }
+}

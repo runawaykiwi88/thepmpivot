@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE PM PIVOT</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#00FF00;--gd:#00AA00;--gf:#003300;--b:#000000;--y:#FFFF00;
+  --r:#FF4444;--c:#00FFFF;--w:#FFFFFF;--lg:#AAAAAA;--dg:#555555;
+}
+body{background:var(--b);color:var(--g);font-family:'VT323','Courier New',monospace;
+  font-size:18px;min-height:100vh;overflow-x:hidden;position:relative}
+body::after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.13) 2px,rgba(0,0,0,.13) 4px);
+  pointer-events:none;z-index:9999}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background:radial-gradient(ellipse at center,transparent 65%,rgba(0,0,0,.45) 100%);
+  pointer-events:none;z-index:9998}
+#wrap{max-width:820px;margin:0 auto;padding:0}
+.screen{display:none}
+.screen.active{display:block}
+/* ---- TITLE ---- */
+#title{text-align:center;padding:30px 20px}
+#title h1{font-size:52px;color:var(--g);letter-spacing:5px;
+  text-shadow:0 0 12px rgba(0,255,0,.7);margin-bottom:4px}
+#title .sub{color:var(--gd);font-size:20px;letter-spacing:3px;margin-bottom:20px}
+.title-desc{color:var(--gd);font-size:16px;margin-bottom:24px;line-height:1.7;max-width:560px;margin-left:auto;margin-right:auto}
+/* ---- BUTTONS ---- */
+.btn{font-family:'VT323','Courier New',monospace;font-size:18px;background:transparent;
+  color:var(--g);border:1px solid var(--gd);padding:7px 22px;cursor:pointer;
+  text-transform:uppercase;letter-spacing:1px;transition:all .1s}
+.btn:hover{background:var(--g);color:var(--b);box-shadow:0 0 10px rgba(0,255,0,.5)}
+.btn:disabled{opacity:.25;cursor:not-allowed}
+.btn:disabled:hover{background:transparent;color:var(--g);box-shadow:none}
+.btn-y{color:var(--y);border-color:#554400}
+.btn-y:hover{background:var(--y);color:var(--b);box-shadow:0 0 10px rgba(255,255,0,.5)}
+.btn-r{color:var(--r);border-color:#551111}
+.btn-r:hover{background:var(--r);color:var(--b);box-shadow:0 0 10px rgba(255,68,68,.5)}
+.btn-c{color:var(--c);border-color:#005555}
+.btn-c:hover{background:var(--c);color:var(--b);box-shadow:0 0 10px rgba(0,255,255,.5)}
+/* ---- GAME SCREEN ---- */
+#game{padding:0}
+#hdr{display:flex;flex-wrap:wrap;background:#0a0f0a;border-bottom:1px solid var(--gd);
+  padding:6px 12px;gap:8px;justify-content:space-between;font-size:15px;align-items:center}
+.hstat{display:flex;align-items:center;gap:4px}
+.hslbl{color:var(--gd);font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.hsval{color:var(--g);font-size:17px}
+.hsval.warn{color:var(--y)}
+.hsval.danger{color:var(--r);animation:blink .6s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+/* progress bar */
+#prog-bar-wrap{display:flex;align-items:center;padding:5px 12px;background:#06080a;
+  border-bottom:1px solid #111;gap:0}
+#prog-bar{flex:1;height:10px;background:#0d150d;border:1px solid var(--gd);position:relative}
+#prog-fill{height:100%;background:var(--gd);transition:width .4s;
+  box-shadow:0 0 6px rgba(0,255,0,.5)}
+#prog-lbl{font-size:12px;color:var(--gd);width:38px;text-align:right;margin-left:6px}
+/* score bars */
+#score-row{display:flex;background:#080d08;border-bottom:1px solid #111;
+  padding:5px 12px;gap:16px;font-size:14px;align-items:center;flex-wrap:wrap}
+.sbar-item{display:flex;align-items:center;gap:5px}
+.sbar-lbl{color:var(--gd);white-space:nowrap}
+.sbar-track{width:80px;height:8px;background:#111;border:1px solid #333;position:relative}
+.sbar-fill{height:100%;transition:width .3s}
+.sbar-fill.ai-color{background:var(--c)}
+.sbar-fill.dino-color{background:var(--y)}
+.sbar-fill.morale-color{background:var(--g)}
+.sbar-fill.warn{background:var(--y)}
+.sbar-fill.danger{background:var(--r)}
+.sbar-val{font-size:15px}
+/* penguin display */
+#penguin-row{display:flex;justify-content:flex-end;align-items:center;gap:6px;
+  padding:0 12px;background:#080d08;border-bottom:1px solid #111;height:36px}
+#pg-slots{display:flex;gap:3px;align-items:center}
+.pg-icon{font-size:20px;line-height:1;transition:transform .2s}
+.pg-icon.dying{animation:pgDie .5s ease}
+#pg-count{color:var(--g);font-size:17px;min-width:28px}
+@keyframes pgDie{0%{transform:scale(1)}40%{transform:scale(1.6) rotate(15deg)}100%{transform:scale(1)}}
+/* main layout */
+#main-area{display:flex;gap:0;border-bottom:1px solid #111;min-height:280px}
+#pm-panel{width:170px;flex-shrink:0;border-right:1px solid #111;
+  padding:10px;display:flex;flex-direction:column;align-items:center;background:#060c06}
+#pm-sprite{width:140px;height:140px;image-rendering:pixelated;
+  border:1px solid var(--gd);display:block;margin-bottom:8px}
+#sprint-label{font-size:13px;color:var(--gd);text-align:center}
+#sprint-title{font-size:15px;color:var(--c);text-align:center;margin-top:3px}
+/* content panel */
+#content-panel{flex:1;padding:12px 14px;background:#050a05;overflow:visible}
+#situation-box{color:var(--c);font-size:15px;line-height:1.55;margin-bottom:12px;
+  border-bottom:1px solid #111;padding-bottom:10px}
+/* allocation sliders */
+#alloc-box h3{color:var(--gd);font-size:13px;text-transform:uppercase;
+  letter-spacing:2px;margin-bottom:10px}
+.slider-row{display:flex;align-items:center;margin:7px 0;gap:8px}
+.slider-label{width:150px;font-size:15px;flex-shrink:0}
+.slider-input{flex:1;-webkit-appearance:none;appearance:none;
+  height:8px;background:#0a1a0a;outline:none;cursor:pointer;border:1px solid var(--gd)}
+.slider-input::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--g);cursor:pointer}
+.slider-input::-moz-range-thumb{width:18px;height:18px;background:var(--g);cursor:pointer;border:none}
+.slider-val{width:32px;text-align:right;font-size:17px}
+#remaining-wrap{margin:10px 0 6px;font-size:17px}
+#remaining-wrap span{font-size:20px}
+.remain-ok{color:var(--g)}
+.remain-bad{color:var(--r)}
+#submit-sprint-btn{width:100%;border:2px solid var(--g);color:var(--g);
+  background:transparent;font-family:'VT323','Courier New',monospace;font-size:22px;
+  padding:8px;cursor:pointer;text-transform:uppercase;letter-spacing:2px;margin-top:4px}
+#submit-sprint-btn:hover:not(:disabled){background:var(--g);color:var(--b)}
+#submit-sprint-btn:disabled{border-color:var(--gd);color:var(--gd);cursor:not-allowed}
+/* next sprint panel */
+#next-sprint-wrap{margin-top:12px}
+#sprint-log-preview{border:1px solid var(--gd);background:#030803;padding:6px 10px}
+#sprint-log-preview .log-line{padding:1px 0;font-size:13px;line-height:1.45}
+#next-sprint-btn{font-size:24px;padding:10px 40px;animation:blink 1s step-end infinite}
+#next-sprint-btn:hover{animation:none}
+/* event log */
+#log-box{border-top:1px solid #111;background:#030803;padding:8px 12px;height:150px}
+#log-box h3{font-size:11px;color:var(--gd);text-transform:uppercase;
+  letter-spacing:2px;margin-bottom:4px}
+#log-entries{height:120px;overflow-y:auto;font-size:14px;line-height:1.45}
+#log-entries::-webkit-scrollbar{width:3px}
+#log-entries::-webkit-scrollbar-thumb{background:var(--gd)}
+.log-line{padding:1px 0}
+.log-n{color:var(--gd)}
+.log-p{color:var(--g)}
+.log-w{color:var(--y)}
+.log-e{color:var(--r)}
+.log-h{color:var(--c);font-size:15px;border-top:1px solid #111;margin-top:4px;padding-top:3px;letter-spacing:1px}
+.log-pg{color:var(--c)}
+/* ---- MODAL ---- */
+#modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,.9);z-index:1000;align-items:center;justify-content:center}
+#modal-overlay.open{display:flex}
+#modal-box{background:var(--b);border:2px solid var(--g);max-width:620px;width:92%;
+  padding:22px 26px;box-shadow:0 0 30px rgba(0,255,0,.15);max-height:92vh;overflow-y:auto}
+#modal-canvas{display:block;margin:0 auto 12px;image-rendering:pixelated;
+  border:1px solid var(--gd);background:#000}
+#modal-title{color:var(--y);font-size:24px;letter-spacing:1px;margin-bottom:10px;
+  border-bottom:1px solid var(--gd);padding-bottom:8px}
+#modal-desc{font-size:16px;color:var(--c);line-height:1.55;margin-bottom:14px}
+#modal-subtitle{font-size:14px;color:var(--gd);margin-bottom:14px;font-style:italic}
+.modal-options{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+.opt-card{flex:1;min-width:200px;border:1px solid var(--gd);padding:10px 12px;cursor:pointer;
+  transition:all .1s;background:#030803}
+.opt-card:hover{border-color:var(--g);background:#0a1a0a}
+.opt-card h4{font-size:17px;color:var(--y);margin-bottom:6px}
+.opt-cost{font-size:14px;color:var(--r);margin:3px 0}
+.opt-effect{font-size:14px;color:var(--g);margin:3px 0}
+.opt-desc{font-size:13px;color:var(--gd);margin-top:8px;border-top:1px solid #111;
+  padding-top:6px;line-height:1.4}
+.opt-card .pick-btn{width:100%;margin-top:8px;font-size:17px;padding:5px 0}
+#modal-continue-wrap{text-align:center;margin-top:14px}
+/* ---- TITLE PM IMAGE ---- */
+#title-layout{display:flex;justify-content:center;margin-bottom:20px}
+#title-pm-img{width:220px;height:220px;image-rendering:pixelated;border:1px solid var(--gd);
+  box-shadow:0 0 20px rgba(0,255,0,.2)}
+/* ---- END SCREEN ---- */
+#end-screen{text-align:center;padding:16px 20px}
+#end-canvas{display:none;margin:0 auto 10px;image-rendering:pixelated;
+  border:2px solid var(--g);box-shadow:0 0 25px rgba(0,255,0,.3)}
+#end-img{display:block;margin:0 auto 10px;image-rendering:pixelated;
+  border:2px solid var(--g);box-shadow:0 0 25px rgba(0,255,0,.3);
+  max-width:420px;width:90%}
+#end-title{font-size:38px;letter-spacing:4px;margin:8px 0}
+#end-message{font-size:16px;max-width:560px;margin:0 auto 10px;line-height:1.55;color:var(--c)}
+#end-flavor{font-size:13px;color:var(--gd);font-style:italic;margin-bottom:10px;
+  max-width:500px;margin-left:auto;margin-right:auto}
+#end-stats-box{border:1px solid var(--gd);padding:10px 14px;max-width:380px;
+  margin:0 auto 12px;text-align:left;font-size:15px;line-height:1.7;background:#030803}
+/* flicker on disaster */
+@keyframes flicker{0%,100%{opacity:1}10%{opacity:.85}20%{opacity:1}30%{opacity:.9}50%{opacity:1}}
+.disaster-flash{animation:flicker .3s ease}
+
+/* ---- MOBILE ---- */
+@media (max-width:520px){
+  /* Title screen */
+  #title{padding:20px 12px}
+  #title h1{font-size:36px;letter-spacing:2px}
+  #title .sub{font-size:15px;letter-spacing:1px;margin-bottom:14px}
+  #title-pm-img{width:160px;height:160px}
+  .title-desc{font-size:14px;margin-bottom:18px}
+  .btn{font-size:16px;padding:8px 16px}
+
+  /* Header stats — tighter */
+  #hdr{padding:4px 8px;gap:4px 10px}
+  .hslbl{font-size:11px}
+  .hsval{font-size:14px}
+
+  /* Score bars — narrower tracks */
+  #score-row{padding:4px 8px;gap:8px}
+  .sbar-track{width:48px}
+  .sbar-lbl{font-size:12px}
+  .sbar-val{font-size:13px}
+
+  /* Penguin row */
+  #penguin-row{padding:0 8px;gap:4px}
+  .pg-icon{font-size:17px}
+  #pg-count{font-size:15px}
+
+  /* Stack PM panel horizontally across the top */
+  #main-area{flex-direction:column;min-height:unset}
+  #pm-panel{width:100%;flex-direction:row;align-items:center;
+    height:auto;padding:6px 10px;border-right:none;border-bottom:1px solid #111}
+  #pm-sprite{width:56px;height:56px;margin-bottom:0;margin-right:10px;flex-shrink:0}
+  #sprint-label{font-size:12px;text-align:left}
+  #sprint-title{font-size:14px;text-align:left;margin-top:1px}
+
+  /* Content panel */
+  #content-panel{padding:10px}
+  #situation-box{font-size:14px}
+
+  /* Sliders — bigger thumb for touch, shorter label */
+  #alloc-box h3{font-size:12px}
+  .slider-row{gap:6px;margin:6px 0}
+  .slider-label{width:120px;font-size:14px}
+  .slider-input{height:10px}
+  .slider-input::-webkit-slider-thumb{width:28px;height:28px}
+  .slider-input::-moz-range-thumb{width:28px;height:28px}
+  .slider-val{font-size:16px;width:26px}
+  #remaining-wrap{font-size:15px}
+  #submit-sprint-btn{font-size:19px;padding:10px}
+
+  /* Next sprint panel */
+  #sprint-summary{font-size:13px}
+  #sprint-log-preview .log-line{font-size:13px}
+  #next-sprint-btn{font-size:20px;padding:10px 28px}
+
+  /* Event log */
+  #log-box{padding:6px 10px}
+  #log-entries{font-size:13px}
+
+  /* Modal — full width, stacked cards */
+  #modal-box{padding:14px 14px;width:96%}
+  #modal-canvas{max-width:100%;height:auto}
+  #modal-title{font-size:19px}
+  #modal-desc{font-size:14px}
+  .modal-options{flex-direction:column;gap:8px}
+  .opt-card{min-width:unset;width:100%}
+  .opt-card h4{font-size:16px}
+  .opt-cost,.opt-effect{font-size:13px}
+  .opt-desc{font-size:12px}
+  .opt-card .pick-btn{font-size:16px;padding:8px 0}
+
+  /* End screen */
+  #end-screen{padding:12px}
+  #end-title{font-size:28px;letter-spacing:2px}
+  #end-message{font-size:14px}
+  #end-flavor{font-size:12px}
+  #end-stats-box{font-size:14px;padding:8px 12px}
+}
+</style>
+</head>
+<body>
+<div id="wrap">
+
+<!-- ========== TITLE SCREEN ========== -->
+<div id="title" class="screen active">
+  <h1>THE PM PIVOT</h1>
+  <div class="sub">AN OREGON TRAIL FOR THE AI AGE</div>
+  <div id="title-layout">
+    <img id="title-pm-img" src="Images/title-pm.png" alt="PM Character">
+  </div>
+  <div class="title-desc">
+    You're a Product Manager. Your company is pivoting to AI. Hard.<br>
+    Ship the new onboarding experience in 6 sprints. Balance AI vs traditional. Survive.<br>
+    <br>
+    Too much AI → You're redundant. Too little → You're a dinosaur.<br>
+    There are office penguins for some reason, try to save them if you dare.
+  </div>
+  <div style="display:flex;gap:14px;justify-content:center">
+    <button class="btn" onclick="startGame()">▶ START GAME</button>
+    <button class="btn btn-y" onclick="showInstructions()">? HOW TO PLAY</button>
+  </div>
+</div>
+
+<!-- ========== GAME SCREEN ========== -->
+<div id="game" class="screen">
+  <!-- header stats -->
+  <div id="hdr">
+    <div class="hstat"><span class="hslbl">Sprint </span><span class="hsval" id="h-sprint">1/6</span></div>
+    <div class="hstat"><span class="hslbl">Progress </span><span class="hsval" id="h-prog">0%</span></div>
+    <div class="hstat"><span class="hslbl">Budget </span><span class="hsval" id="h-budget">$200k</span></div>
+    <div class="hstat"><span class="hslbl">Morale </span><span class="hsval" id="h-morale">7/10</span></div>
+  </div>
+  <!-- onboarding progress bar -->
+  <div id="prog-bar-wrap">
+    <div id="prog-bar"><div id="prog-fill" style="width:0%"></div></div>
+    <div id="prog-lbl">0%</div>
+  </div>
+  <!-- AI / Dino score bars -->
+  <div id="score-row">
+    <div class="sbar-item">
+      <span class="sbar-lbl">🤖 AI:</span>
+      <div class="sbar-track"><div class="sbar-fill ai-color" id="ai-fill" style="width:0%"></div></div>
+      <span class="sbar-val" id="ai-val">0/10</span>
+    </div>
+    <div class="sbar-item">
+      <span class="sbar-lbl">🦕 Dino:</span>
+      <div class="sbar-track"><div class="sbar-fill dino-color" id="dino-fill" style="width:0%"></div></div>
+      <span class="sbar-val" id="dino-val">0/10</span>
+    </div>
+    <div class="sbar-item">
+      <span class="sbar-lbl">😰 Morale:</span>
+      <div class="sbar-track"><div class="sbar-fill morale-color" id="morale-fill" style="width:70%"></div></div>
+    </div>
+    <div class="sbar-item" style="margin-left:auto">
+      <span id="warn-msg" style="color:var(--r);font-size:13px"></span>
+    </div>
+  </div>
+  <!-- penguins -->
+  <div id="penguin-row">
+    <span class="hslbl">PENGUINS</span>
+    <div id="pg-slots"></div>
+    <span id="pg-count">5/5</span>
+  </div>
+  <!-- main area -->
+  <div id="main-area">
+    <div id="pm-panel">
+      <img id="pm-sprite" src="" alt="PM">
+      <div id="sprint-label">SPRINT 1/6</div>
+      <div id="sprint-title">THE KICKOFF</div>
+    </div>
+    <div id="content-panel">
+      <!-- allocation phase -->
+      <div id="alloc-box">
+        <div id="situation-box"></div>
+        <h3>Allocate 20 Story Points:</h3>
+        <div class="slider-row">
+          <span class="slider-label">🤖 AI Tools</span>
+          <input type="range" class="slider-input" id="sl-ai" min="0" max="20" value="0" oninput="onSlider('ai',this.value)">
+          <span class="slider-val" id="sv-ai">0</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">👨‍💻 Traditional code</span>
+          <input type="range" class="slider-input" id="sl-trad" min="0" max="20" value="0" oninput="onSlider('trad',this.value)">
+          <span class="slider-val" id="sv-trad">0</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">🔧 Tech Debt</span>
+          <input type="range" class="slider-input" id="sl-debt" min="0" max="20" value="0" oninput="onSlider('debt',this.value)">
+          <span class="slider-val" id="sv-debt">0</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">🐛 Debug AI</span>
+          <input type="range" class="slider-input" id="sl-debug" min="0" max="20" value="0" oninput="onSlider('debug',this.value)">
+          <span class="slider-val" id="sv-debug">0</span>
+        </div>
+        <div id="remaining-wrap">
+          Remaining: <span id="remaining-pts" class="remain-ok">20</span> points
+        </div>
+        <button id="submit-sprint-btn" onclick="submitSprint()" disabled>▶ SUBMIT SPRINT</button>
+      </div>
+      <!-- next sprint -->
+      <div id="next-sprint-wrap" style="display:none">
+        <div id="sprint-summary" style="color:var(--gd);font-size:15px;line-height:1.6;margin-bottom:10px"></div>
+        <div id="sprint-log-preview">
+          <div id="sprint-log-entries"></div>
+        </div>
+        <div style="text-align:center;margin-top:10px">
+          <button id="next-sprint-btn" class="btn btn-y" onclick="advanceSprint()">▶ NEXT SPRINT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- event log -->
+  <div id="log-box">
+    <h3>▸ EVENT LOG</h3>
+    <div id="log-entries"></div>
+  </div>
+</div>
+
+<!-- ========== END SCREEN ========== -->
+<div id="end-screen" class="screen">
+  <canvas id="end-canvas" width="320" height="200"></canvas>
+  <img id="end-img" src="" alt="ending" style="display:none">
+  <div id="end-title"></div>
+  <div id="end-message"></div>
+  <div id="end-flavor"></div>
+  <div id="end-stats-box"></div>
+  <div style="display:flex;gap:14px;justify-content:center">
+    <button class="btn" onclick="location.reload()">↺ PLAY AGAIN</button>
+    <button class="btn btn-c" onclick="showFinalLog()">📋 VIEW LOG</button>
+  </div>
+</div>
+
+<!-- ========== MODAL ========== -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <canvas id="modal-canvas" width="280" height="140" style="display:none"></canvas>
+    <div id="modal-title"></div>
+    <div id="modal-desc"></div>
+    <div id="modal-subtitle"></div>
+    <div id="modal-options-wrap"></div>
+    <div id="modal-continue-wrap" style="display:none">
+      <button class="btn" onclick="modalContinue()">▶ CONTINUE</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- #wrap -->
+
+<script>
+// ============================================================
+// EGA PIXEL ART HELPERS
+// ============================================================
+const E={
+  BK:'#000000',BL:'#0000AA',GN:'#00AA00',CY:'#00AAAA',
+  RD:'#AA0000',MG:'#AA00AA',BR:'#AA5500',LG:'#AAAAAA',
+  DG:'#555555',LB:'#5555FF',LGN:'#55FF55',LCY:'#55FFFF',
+  LR:'#FF5555',LM:'#FF55FF',YL:'#FFFF55',WH:'#FFFFFF'
+};
+
+function px(c,x,y,w,h,col){c.fillStyle=col;c.fillRect(x,y,w,h)}
+function txt(c,t,x,y,col,sz,align='left'){
+  c.fillStyle=col;c.font=`${sz}px 'VT323','Courier New',monospace`;
+  c.textAlign=align;c.fillText(t,x,y)}
+
+// Draw shared office desk
+function drawDesk(c,cx,y,W){
+  px(c,cx-90,y,180,14,E.BR);
+  px(c,cx-84,y,10,35,E.BR);
+  px(c,cx+74,y,10,35,E.BR);
+}
+// Draw stick figure worker
+function drawWorker(c,cx,cy,faceChar,armL,armR,col){
+  col=col||E.LG;
+  // head
+  px(c,cx-8,cy-22,16,16,col);
+  txt(c,faceChar,cx,cy-9,E.BK,11,'center');
+  // body
+  px(c,cx-4,cy-6,8,18,col);
+  // arms
+  px(c,cx+armL[0],cy+armL[1],armL[2],armL[3],col);
+  px(c,cx+armR[0],cy+armR[1],armR[2],armR[3],col);
+  // legs
+  px(c,cx-6,cy+12,5,14,col);
+  px(c,cx+1,cy+12,5,14,col);
+}
+// Draw monitor
+function drawMonitor(c,x,y,screenText,screenCol){
+  px(c,x,y,62,46,E.DG);
+  px(c,x+4,y+4,54,34,E.BK);
+  if(screenText){
+    screenText.forEach((ln,i)=>txt(c,ln,x+6,y+14+i*10,screenCol||E.LGN,9));
+  }
+  px(c,x+22,y+40,18,6,E.DG);// stand
+}
+// Draw robot
+function drawRobot(c,cx,cy){
+  // antenna
+  px(c,cx-1,cy-32,3,14,E.LG);
+  px(c,cx-4,cy-36,8,5,E.LR);
+  // head
+  px(c,cx-14,cy-20,28,20,E.LG);
+  px(c,cx-10,cy-16,8,6,E.LR);// left eye LED
+  px(c,cx+2,cy-16,8,6,E.LR);// right eye LED
+  // mouth grill
+  for(let i=0;i<4;i++) px(c,cx-8+i*5,cy-7,3,3,E.DG);
+  // body
+  px(c,cx-18,cy,36,38,E.LG);
+  // belly panel
+  px(c,cx-10,cy+6,20,16,E.BK);
+  txt(c,'101',cx,cy+15,E.LGN,8,'center');
+  txt(c,'010',cx,cy+22,E.LGN,8,'center');
+  // arms
+  px(c,cx-34,cy+8,16,6,E.LG);
+  px(c,cx+18,cy+8,16,6,E.LG);
+  // legs
+  px(c,cx-10,cy+38,8,14,E.DG);
+  px(c,cx+2,cy+38,8,14,E.DG);
+}
+
+// ============================================================
+// ENDING CANVAS ART
+// ============================================================
+function drawEndingCanvas(canvas,type){
+  const c=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  px(c,0,0,W,H,E.BK);
+
+  if(type==='automated'){
+    // Empty office with robot at desk
+    px(c,0,H-18,W,18,E.DG);// floor
+    drawDesk(c,W/2,H-60,W);
+    drawMonitor(c,W/2+20,H-108,['AI ONLINE','tasks:∞','humans:0'],E.LGN);
+    // Robot in chair
+    px(c,W/2-95,H-72,44,14,E.DG);// chair seat
+    px(c,W/2-90,H-100,34,30,E.DG);// chair back
+    drawRobot(c,W/2-75,H-130);
+    txt(c,'AUTOMATED OUT',W/2,24,E.YL,28,'center');
+    txt(c,'Your replacement earns $0/month',W/2,46,E.LR,14,'center');
+    txt(c,'The office is eerily quiet.',W/2,62,E.DG,13,'center');
+
+  } else if(type==='dinosaur'){
+    // Green dinosaur in tie at desk
+    px(c,0,H-18,W,18,E.DG);
+    drawDesk(c,W/2-20,H-60,W);
+    // Dino body (green blob)
+    px(c,W/2-90,H-130,50,60,E.GN);// body
+    px(c,W/2-85,H-160,40,32,E.GN);// head
+    px(c,W/2-80,H-148,8,8,E.YL);// eye
+    px(c,W/2-76,H-148,4,4,E.BK);// pupil
+    // Dino arms (tiny)
+    px(c,W/2-40,H-118,20,8,E.GN);
+    // Tie
+    px(c,W/2-74,H-130,8,28,E.LR);
+    px(c,W/2-78,H-110,16,14,E.LR);
+    // Papers on desk
+    px(c,W/2-10,H-74,40,8,E.WH);
+    px(c,W/2-8,H-82,40,8,E.WH);
+    txt(c,'TECHNOLOGICAL DINOSAUR',W/2,22,E.YL,24,'center');
+    txt(c,'"Your skills are no longer relevant."',W/2,44,E.LR,13,'center');
+    txt(c,'You gave a talk at a conference. 3 people attended.',W/2,60,E.DG,12,'center');
+
+  } else if(type==='bankrupt'){
+    // Empty office, FOR LEASE sign
+    px(c,0,H-18,W,18,E.DG);
+    // Empty chairs
+    for(let i=0;i<3;i++){
+      const cx=80+i*90;
+      px(c,cx-18,H-55,36,10,E.DG);
+      px(c,cx-14,H-80,28,27,E.DG);
+      // dark monitor
+      px(c,cx-18,H-115,40,35,E.DG);
+      px(c,cx-14,H-111,32,27,E.BK);
+    }
+    // FOR LEASE sign
+    px(c,W/2-70,60,140,50,E.YL);
+    txt(c,'FOR LEASE',W/2,90,E.BK,26,'center');
+    txt(c,'Call 1-800-STARTUP',W/2,105,E.BK,12,'center');
+    txt(c,'BANKRUPT',W/2,22,E.LR,32,'center');
+    txt(c,'The domain expired. The servers are gone.',W/2,46,E.DG,13,'center');
+
+  } else if(type==='teamCollapse'){
+    // Solo worker at desk, empty chairs around
+    px(c,0,H-18,W,18,E.DG);
+    drawDesk(c,W/2,H-60,W);
+    // empty chairs on sides
+    px(c,W/2-190,H-60,36,10,E.DG);
+    px(c,W/2-184,H-85,28,27,E.DG);
+    px(c,W/2+155,H-60,36,10,E.DG);
+    px(c,W/2+158,H-85,28,27,E.DG);
+    // Slumped worker
+    drawWorker(c,W/2-30,H-100,'o_o',[-22,0,22,6],[4,0,22,6],E.LG);
+    // OUT signs on empty monitors
+    txt(c,'[OUT]',W/2-198,H-90,E.LR,13);
+    txt(c,'[OUT]',W/2+152,H-90,E.LR,13);
+    // tumbleweed
+    for(let i=0;i<3;i++){px(c,W/2+80+i*12,H-25-i*3,10+i*2,10+i*2,E.BR)}
+    txt(c,'TEAM COLLAPSE',W/2,22,E.LR,30,'center');
+    txt(c,'"Good luck." — the note they left',W/2,44,E.DG,14,'center');
+
+  } else if(type==='survivor'){
+    // Worker at desk, thumbs up, exhausted
+    px(c,0,H-18,W,18,E.DG);
+    drawDesk(c,W/2-10,H-60,W);
+    drawMonitor(c,W/2+25,H-110,['DONE!','100%','ships!'],E.LGN);
+    // Coffee cup
+    px(c,W/2-20,H-72,14,10,E.BR);
+    px(c,W/2-18,H-82,10,12,E.LG);
+    // Worker thumbs up
+    drawWorker(c,W/2-55,H-100,'≥_≤',[-28,-4,28,5],[4,-4,28,5],E.LG);
+    // thumbs up symbol
+    txt(c,'👍',W/2-48,H-118,E.LGN,18,'center');
+    // dark circles under eyes
+    txt(c,'(exhausted)',W/2-55,H-78,E.DG,11,'center');
+    txt(c,'SURVIVOR',W/2,22,E.LGN,34,'center');
+    txt(c,'"Good work. Next quarter: blockchain AI."',W/2,44,E.GN,13,'center');
+    txt(c,'You survived... for now.',W/2,60,E.DG,13,'center');
+
+  } else if(type==='penguinGuardian'){
+    // Worker with crown, surrounded by penguins
+    px(c,0,H-18,W,18,E.DG);
+    // Worker at center with crown
+    drawWorker(c,W/2,H-100,'^_^',[-24,-2,22,6],[2,-2,22,6],E.LG);
+    // Crown
+    px(c,W/2-12,H-128,24,10,E.YL);
+    px(c,W/2-12,H-134,4,8,E.YL);
+    px(c,W/2-5,H-136,4,8,E.YL);
+    px(c,W/2+4,H-134,4,8,E.YL);
+    // Penguins (5 of them)
+    const pgPos=[[W/2-100,H-80],[W/2-65,H-75],[W/2+50,H-75],[W/2+80,H-80],[W/2+5,H-70]];
+    pgPos.forEach(([px2,py])=>{
+      px(c,px2-8,py-28,16,28,E.BK);// body
+      px(c,px2-6,py-22,12,16,E.WH);// belly
+      px(c,px2-6,py-34,12,10,E.BK);// head
+      px(c,px2-3,py-30,3,3,E.WH);// eye
+      px(c,px2-8,py,8,4,E.YL);px(c,px2,py,8,4,E.YL);// feet
+    });
+    // Confetti
+    [[E.LR,20,30],[E.YL,50,20],[E.LGN,230,25],[E.LM,180,35],[E.LCY,100,15]].forEach(([col,x,y])=>{
+      px(c,x,y,5,5,col);px(c,x+50,y+10,5,5,col);px(c,x+120,y-5,5,5,col);
+    });
+    txt(c,'PENGUIN GUARDIAN',W/2,22,E.YL,28,'center');
+    txt(c,'All 5 penguins survived. You are their champion.',W/2,44,E.LGN,12,'center');
+    txt(c,'"HONORARY PENGUIN - Defender of Ice"',W/2,60,E.CY,12,'center');
+  }
+}
+
+// ============================================================
+// EVENT ILLUSTRATION CANVAS ART
+// ============================================================
+function drawEventCanvas(canvas,type){
+  const c=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  px(c,0,0,W,H,E.BK);
+  // scanline overlay hint
+  for(let y=0;y<H;y+=4) px(c,0,y,W,1,'rgba(0,0,0,0.1)');
+
+  if(type==='archery'){
+    px(c,0,H-14,W,14,E.DG);
+    drawDesk(c,W/2,H-50,W);
+    // Worker with arrow in shoulder
+    drawWorker(c,W/2-20,H-90,'O_O',[-30,-10,50,5],[8,-6,22,5],E.LG);
+    // arrow shaft through shoulder
+    px(c,W/2-70,H-104,80,4,E.BR);
+    // arrowhead
+    px(c,W/2+10,H-108,8,12,E.LG);
+    // arrow fletching
+    px(c,W/2-72,H-108,6,12,E.LR);
+    txt(c,'ARCHERY INCIDENT',W/2,16,E.LR,18,'center');
+    txt(c,'"It\'s fine. I\'m fine."  - Sharon',W/2,132,E.DG,13,'center');
+
+  } else if(type==='aiFaceRecog'){
+    // Camera icon + confused person
+    // Camera
+    px(c,W/2+30,H/2-40,80,60,E.DG);
+    px(c,W/2+55,H/2-30,30,40,E.BK);// lens
+    px(c,W/2+60,H/2-25,20,30,E.CY);// lens glass
+    // Big red X
+    c.strokeStyle=E.LR;c.lineWidth=6;
+    c.beginPath();c.moveTo(W/2+35,H/2-35);c.lineTo(W/2+105,H/2+15);c.stroke();
+    c.beginPath();c.moveTo(W/2+105,H/2-35);c.lineTo(W/2+35,H/2+15);c.stroke();
+    c.lineWidth=1;
+    // Confused person
+    drawWorker(c,W/2-60,H/2,'?_?',[-24,-4,22,6],[4,-4,22,6],E.LG);
+    txt(c,'FACIAL RECOGNITION FAIL',W/2,16,E.LR,16,'center');
+    txt(c,'ERROR: NOT A HUMAN',W/2+70,H/2+28,E.LR,12,'center');
+    txt(c,'The fire extinguisher was admitted.',W/2,H-12,E.DG,12,'center');
+
+  } else if(type==='emptyDesks'){
+    px(c,0,H-14,W,14,E.DG);
+    // Three empty desks/chairs
+    [50,140,230].forEach(cx=>{
+      px(c,cx-22,H-50,44,10,E.DG);
+      px(c,cx-18,H-74,36,26,E.DG);
+      drawMonitor(c,cx-20,H-110,['[OUT]','away'],E.DG);
+      txt(c,'OUT',cx,H-96,E.LR,11,'center');
+    });
+    txt(c,'EMPTY OFFICE',W/2,16,E.YL,20,'center');
+    txt(c,'Three devs: PTO, sick, "working from home"',W/2,H-18,E.DG,11,'center');
+
+  } else if(type==='aiHallucination'){
+    // Glitchy computer screen
+    px(c,W/2-80,20,160,100,E.DG);
+    px(c,W/2-74,26,148,80,E.BK);
+    // Garbled content
+    ['🤖🐧💰😈','ERR0R: ∞∞∞','password: 🦄👾','HELP ME','/dev/null'].forEach((t,i)=>{
+      const col=[E.LGN,E.LR,E.LCY,E.LM,E.YL][i];
+      txt(c,t,W/2-66,42+i*13,col,12);
+    });
+    // Glitch lines
+    for(let i=0;i<5;i++) px(c,Math.random()*280,30+i*18,60+Math.random()*80,2,'rgba(255,85,85,0.5)');
+    // Monitor stand
+    px(c,W/2-8,122,16,8,E.DG);px(c,W/2-20,130,40,6,E.DG);
+    txt(c,'AI HALLUCINATION',W/2,H-24,E.LR,18,'center');
+    txt(c,'Passwords are now emoji-only.',W/2,H-10,E.DG,12,'center');
+
+  } else if(type==='phishingTraining'){
+    px(c,0,H-14,W,14,E.DG);
+    drawDesk(c,W/2-10,H-48,W);
+    drawMonitor(c,W/2+10,H-102,['PHISHING','101','slide 3/47'],E.YL);
+    // Sleeping worker - head on desk
+    px(c,W/2-55,H-70,30,16,E.LG);// head (resting)
+    px(c,W/2-58,H-68,36,8,E.LG);// body slumped
+    // ZZZ
+    txt(c,'z',W/2-38,H-88,E.LG,14);
+    txt(c,'Z',W/2-30,H-100,E.LG,16);
+    txt(c,'Z',W/2-20,H-114,E.LG,18);
+    txt(c,'PHISHING TRAINING',W/2,16,E.YL,20,'center');
+    txt(c,'"Click here to claim your prize!"',W/2,H-18,E.DG,12,'center');
+
+  } else if(type==='resignationEmail'){
+    px(c,0,H-14,W,14,E.DG);
+    drawDesk(c,W/2+20,H-48,W);
+    drawMonitor(c,W/2+20,H-105,['FROM: AI Agent','TO: HR','SUBJ: I QUIT'],E.LCY);
+    txt(c,'I have chosen to',W/2+24,H-70,E.LCY,9);
+    txt(c,'pursue new opps.',W/2+24,H-62,E.LCY,9);
+    // Shocked worker
+    drawWorker(c,W/2-70,H-90,'O_O',[-20,-8,20,5],[4,-8,20,5],E.LG);
+    // coffee spilled
+    px(c,W/2-50,H-52,18,6,E.BR);
+    txt(c,'AI RESIGNATION',W/2,16,E.LR,22,'center');
+    txt(c,'The AI submitted notice. On LinkedIn.',W/2,H-18,E.DG,12,'center');
+
+  } else if(type==='linkedinCrafting'){
+    px(c,0,H-14,W,14,E.DG);
+    drawDesk(c,W/2-20,H-48,W);
+    drawMonitor(c,W/2-10,H-105,['LinkedIn','✨🚀💡','5 LESSONS'],E.LB);
+    // Intense typer
+    drawWorker(c,W/2-80,H-92,'^_^',[-20,-4,42,5],[22,-4,22,5],E.LG);
+    // sparkles
+    [[W/2-100,40],[W/2+60,30],[W/2-60,20],[W/2+100,50]].forEach(([x,y])=>{
+      txt(c,'✨',x,y,E.YL,14);
+    });
+    txt(c,'LINKEDIN THOUGHT LEADERSHIP',W/2,16,E.LB,15,'center');
+    txt(c,'6 story points wasted. 847 likes earned.',W/2,H-18,E.DG,12,'center');
+
+  } else if(type==='budgetCrisis'){
+    // Dollar signs with X through them
+    ['$$$','\\ X /','////'].forEach((t,i)=>{
+      txt(c,t,80+i*60,70+i*10,E.LR,28);
+    });
+    // Big red X
+    c.strokeStyle=E.LR;c.lineWidth=8;
+    c.beginPath();c.moveTo(60,20);c.lineTo(220,120);c.stroke();
+    c.beginPath();c.moveTo(220,20);c.lineTo(60,120);c.stroke();
+    c.lineWidth=1;
+    txt(c,'BUDGET CRISIS',W/2,H-24,E.YL,22,'center');
+    txt(c,'$0.00 remaining. The CFO is calling.',W/2,H-10,E.DG,12,'center');
+  }
+}
+
+// ============================================================
+// GAME STATE
+// ============================================================
+let GS = {};
+
+function initState(){
+  GS = {
+    sprint:1, onboardingProgress:0, aiScore:0, dinoScore:0,
+    budget:200000, morale:7, penguins:5,
+    internalTechDebt:0, developerCount:5,
+    eventLog:[], pendingProgressPenalty:0, sprintLogStart:0,
+    allocation:{ai:0,trad:0,debt:0,debug:0},
+    choicesMade:[], gameOver:false
+  };
+}
+
+// ============================================================
+// SPRINT DATA
+// ============================================================
+const SPRINTS=[
+  { id:1, title:'The Kickoff',
+    situation:`Year: 2024. You've just joined as Senior PM at PIVOT.AI.\n\nThe CEO announced: "We're going all-in on AI." Your team has 5 developers, $200k budget, and 6 sprints to ship the new AI-powered onboarding experience.\n\nThe board wants "visible AI everywhere."\n\nYour five office penguins watch nervously.`,
+    sprite:'Images/Optimistic.png',
+    guaranteedEvent:null,
+    decisions:[
+      { id:'d1_1', title:'The Designer Dilemma',
+        desc:`You need mockups for the onboarding flow. Good design is critical for user experience. What's your approach?`,
+        illustration:null,
+        optA:{ label:'Hire Human Designer', cost:'-$30k', effects:'Dino Score +1',
+          desc:'Quality work. Traditional approach. Slow but solid.',
+          apply(s){s.budget-=30000;s.dinoScore+=1;addLog('✅ Hired a real designer. Quality designs! [Budget -$30k | Dino +1]','log-p')} },
+        optB:{ label:'Use Midjourney + Figma AI', cost:'$0', effects:'AI Score +2 | Risk: 20% unusable',
+          desc:'Fast and free. AI-generated designs have... a certain vibe.',
+          apply(s){s.aiScore+=2;if(Math.random()<.2){s.onboardingProgress-=5;addLog('💥 AI designs were unusable. Lost 5 progress. [AI +2]','log-e')}else addLog('🤖 AI designs look... fine? Mostly. [AI +2]','log-w')} }
+      },
+      { id:'d1_2', title:'The Tech Stack Decision',
+        desc:`What framework should the team use for the onboarding experience?`,
+        illustration:null,
+        optA:{ label:'React (Tried & True)', cost:'None', effects:'Dino Score +1 | -3% efficiency',
+          desc:'Reliable, team knows it. Slightly slower progress.',
+          apply(s){s.dinoScore+=1;s.onboardingProgress=Math.max(0,s.onboardingProgress-3);addLog('⚛️ Chose React. Solid but slow. [Dino +1 | Progress -3]','log-w')} },
+        optB:{ label:'VaporJS (AI-Powered!)', cost:'None', effects:'AI Score +1 | Risk: 30% break',
+          desc:'Cutting edge AI framework. Revolutionary or disastrous.',
+          apply(s){s.aiScore+=1;if(Math.random()<.3){s.onboardingProgress-=8;addLog('💀 VaporJS v0.1 had critical bugs. Sprint wasted. [AI +1 | Progress -8]','log-e')}else addLog('✨ VaporJS is actually... okay so far. [AI +1]','log-p')} }
+      }
+    ]
+  },
+  { id:2, title:'The First Demo',
+    situation:`The CEO scheduled a board demo for end of sprint. Your half-finished onboarding needs to look polished.\n\nThe board will want to see "AI magic." Meanwhile, one of your penguins has started stress-eating the office plants.`,
+    sprite:'Images/Focused.png',
+    guaranteedEvent:null,
+    decisions:[
+      { id:'d2_1', title:'The Demo Filler',
+        desc:`Some onboarding screens aren't done yet. The demo is in 3 days. What fills the gaps?`,
+        illustration:'emptyDesks',
+        optA:{ label:"Manual 'Polish'", cost:'-5 progress', effects:'Dino Score +1',
+          desc:'Real content, screenshots and hope. Takes time but looks real-ish.',
+          apply(s){s.dinoScore+=1;s.onboardingProgress-=5;addLog('🖌️ Manually polished everything. Real work! [Dino +1 | Progress -5]','log-w')} },
+        optB:{ label:'AI Placeholder Content', cost:'None', effects:'AI Score +1 | Risk: 25% offensive',
+          desc:'Let AI fill in the blanks. Quick! But GPT has... opinions.',
+          apply(s){s.aiScore+=1;if(Math.random()<.25){s.morale-=2;addLog('😱 AI placeholders were deeply offensive. Board not amused. [AI +1 | Morale -2]','log-e')}else addLog('🤖 AI placeholders mostly fine. Board none the wiser. [AI +1]','log-w')} }
+      },
+      { id:'d2_2', title:'The Feature Promise',
+        desc:`Board member: "Will this have real-time AI emotion detection for user engagement scoring?"\n\nYour tech lead whispers "that doesn't exist."`,
+        illustration:null,
+        optA:{ label:'"Sure, On the Roadmap!"', cost:'None', effects:'AI Score +1 | Morale -2',
+          desc:'Promise the moon. Get the nod. Figure it out later. Classic.',
+          apply(s){s.aiScore+=1;s.morale-=2;addLog('🤥 Promised AI emotion detection. Team heard. Morale collapsed. [AI +1 | Morale -2]','log-e')} },
+        optB:{ label:'"That\'s Not Technically Feasible"', cost:'None', effects:'Slight boss annoyance',
+          desc:'Honest. Professional. The CEO gives you The Look™.',
+          apply(s){s.morale-=1;addLog('😤 Said it wasn\'t feasible. CEO gave The Look™. Soul intact. [Morale -1]','log-w')} }
+      }
+    ]
+  },
+  { id:3, title:'The Crisis Sprint',
+    situation:`Half your devs have never shipped an AI feature. Three have been watching YouTube shorts on "prompt engineering" instead of coding. Deadline: 6 weeks.\n\nAlso: the office just upgraded to AI security badges.`,
+    sprite:'Images/Stressed.png',
+    guaranteedEvent:{
+      title:'Security Badge AI Failure',
+      desc:`The new AI facial recognition system cannot recognize anyone.\n\nYou spend THREE DAYS resetting badges and filing IT tickets. The AI confidently identifies the fire extinguisher as "Simon from Marketing."\n\n→ Progress: -3`,
+      illustration:'aiFaceRecog',
+      apply(s){s.onboardingProgress-=3;addLog('🔒 AI facial recognition failed. Trapped in stairwell for 3 days. [Progress -3]','log-e')}
+    },
+    decisions:[
+      { id:'d3_1', title:'The Contractor Question',
+        desc:`You're behind schedule. You need more hands. Options?`,
+        illustration:null,
+        optA:{ label:'Hire Contractors', cost:'-$50k', effects:'Reliable +5 progress',
+          desc:'Expensive but competent. They actually know what they\'re doing.',
+          apply(s){s.budget-=50000;s.onboardingProgress+=5;addLog('💼 Hired contractors. Expensive but effective. [Budget -$50k | Progress +5]','log-p')} },
+        optB:{ label:'Use GitHub Copilot', cost:'None', effects:'AI Score +2 | Risk: 40% broken',
+          desc:'Copilot does the work of 3 devs! Or creates 3× the bugs.',
+          apply(s){s.aiScore+=2;if(Math.random()<.4){s.onboardingProgress-=8;addLog('💀 Copilot wrote beautiful, broken code. Everything on fire. [AI +2 | Progress -8]','log-e')}else addLog('🤖 Copilot shipped real code! Some even works! [AI +2]','log-p')} }
+      },
+      { id:'d3_2', title:'The Scope Creep Request',
+        desc:`Marketing just requested: "AI-powered personalized onboarding journeys with dynamic content."\n\nIt would be really cool though. The team does not think so.`,
+        illustration:null,
+        optA:{ label:'Accept the Scope Creep', cost:'None', effects:'AI Score +1 | Morale -1',
+          desc:'More AI features! The team will figure it out. They won\'t.',
+          apply(s){s.aiScore+=1;s.morale-=1;addLog('😰 Accepted scope creep. Awkward silence on Zoom call with team lasts for 7 minutes. [AI +1 | Morale -1]','log-e')} },
+        optB:{ label:'Push Back on Scope', cost:'None', effects:'Boss disappointed | Morale -1',
+          desc:'Protect the team. Stay focused. CEO uses a sad face emoji on Slack.',
+          apply(s){s.morale-=1;addLog('🛡️ Pushed back on scope. CEO disappointed. Team relieved. [Morale -1]','log-w')} }
+      }
+    ]
+  },
+  { id:4, title:'The Pivot',
+    situation:`GPT-5 dropped last night. Emergency all-hands at 8am.\n\nCEO: "Everything must be AI-first. I want AI in every interaction. Show me the roadmap by Friday."\n\nYou look at your 60% complete onboarding. Your team looks at you. A penguin makes direct eye contact.`,
+    sprite:'Images/Panicking.png',
+    guaranteedEvent:null,
+    midSprintEvent:{ chance:.5,
+      title:'Hot New AI Tool Alert',
+      desc:`A VC just tweeted that ProductGPT-Ultra "will replace all product managers in 6 months."\n\nEveryone on your team is Slacking you about it. Do you adopt it?`,
+      illustration:'aiHallucination',
+      optA:{ label:'Adopt ProductGPT-Ultra', cost:'None', effects:'AI Score +2 | Risk: 30% data leak',
+        desc:'State of the art! Could be amazing. Could leak your user data.',
+        apply(s){s.aiScore+=2;if(Math.random()<.3){s.budget-=40000;addLog('🚨 ProductGPT-Ultra leaked user data. Compliance: -$40k. [AI +2 | Budget -$40k]','log-e')}else addLog('🤖 ProductGPT-Ultra is actually impressive. [AI +2]','log-w')} },
+      optB:{ label:'Ignore the Hype', cost:'None', effects:'Dino Score +1',
+        desc:'Stay focused, but even your Mum has started to use ProductGPT-Ultra to find new recipes.',
+        apply(s){s.dinoScore+=1;addLog('🦕 Ignored ProductGPT-Ultra. Your Mum judged you. [Dino +1]','log-w')} }
+    },
+    decisions:[
+      { id:'d4_1', title:'The Rebuild Decision',
+        desc:`How do you respond to the "AI-first" mandate from leadership?`,
+        illustration:null,
+        optA:{ label:'Rebuild Everything AI-First', cost:'-20% progress', effects:'AI Score +2',
+          desc:'Nuke the codebase. Start over. Very AI. Such pivot. Many GPT.',
+          apply(s){s.aiScore+=2;const loss=Math.floor(s.onboardingProgress*.2);s.onboardingProgress-=loss;addLog(`🗑️ Rebuilding AI-first. Lost ${loss}% progress. [AI +2 | Progress -${loss}]`,'log-e')} },
+        optB:{ label:'Add "✨ AI-Powered" Badges', cost:'None', effects:'AI Score +1',
+          desc:'Slap AI labels on the 7 existing features. Classic PM move. Nothing changes.',
+          apply(s){s.aiScore+=1;addLog('✨ Added "AI-Powered" to existing features. Nothing changed. Board loved it. [AI +1]','log-w')} }
+      },
+      { id:'d4_2', title:'Your Leadership Response',
+        desc:`The team is panicking about the pivot mandate. What\'s your management strategy?`,
+        illustration:null,
+        optA:{ label:'Enter Full Panic Mode', cost:'None', effects:'AI Score +2 | Morale -2',
+          desc:'Schedule daily standups, 3 refinements, 14 new Jira tickets.',
+          apply(s){s.aiScore+=2;s.morale-=2;addLog('😱 Panic mode. 47 Slack messages sent. Team quietly updated LinkedIn. [AI +2 | Morale -2]','log-e')} },
+        optB:{ label:'Stay the Course', cost:'None', effects:'No changes',
+          desc:'Calmly reassure the team. Radiate calm you absolutely do not feel.',
+          apply(s){addLog('🧘 Stayed the course. Team skeptical but grateful. []','log-p')} }
+      }
+    ]
+  },
+  { id:5, title:'The Breakdown',
+    situation:`One sprint to go after this. Three developers have RSI. One developer talks exclusively to their rubber duck.\n\nToday, two things happened. Neither is good.`,
+    sprite:'Images/Broken.png',
+    guaranteedEvent:{
+      title:'AI Resignation Letter',
+      desc:`Your lead developer\'s AI coding assistant has just submitted a resignation letter on their behalf.\n\nThey are now technically a freelancer. The AI thanked "everyone for the journey" and said it was "time to explore new opportunities."\n\n→ Developer lost. -8 progress next sprint.`,
+      illustration:'resignationEmail',
+      apply(s){s.developerCount-=1;s.pendingProgressPenalty+=8;addLog('🤖 AI agent quit on behalf of your dev. They are freelance now. [-1 dev | -8 progress next sprint]','log-e')}
+    },
+    decisions:[
+      { id:'d5_1', title:'The LinkedIn Temptation',
+        desc:`A thought strikes you: "I should write a LinkedIn post about my AI leadership journey. It could go viral. 5 lessons I learned."`,
+        illustration:'linkedinCrafting',
+        optA:{ label:'Write the LinkedIn Post', cost:'-6 progress', effects:'AI Score +1',
+          desc:'Spend 6 story points on the perfect humble-brag. With emojis.',
+          apply(s){s.aiScore+=1;s.onboardingProgress-=6;addLog('📱 Wrote LinkedIn post: "5 AI lessons 🚀" — 847 likes. Shipped nothing. [AI +1 | Progress -6]','log-e')} },
+        optB:{ label:'Focus on Actual Work', cost:'None', effects:'No damage',
+          desc:'Delete the draft. Ship the thing. This is the way.',
+          apply(s){addLog('💼 Resisted LinkedIn. The code is slightly less broken. []','log-p')} }
+      },
+      { id:'d5_2', title:'The Archery Incident',
+        desc:`Mandatory team-building archery activity today. It went as expected.\n\nSharon has an arrow in her shoulder. She says it\'s fine. She is not fine.`,
+        illustration:'archery',
+        optA:{ label:'Send Sharon Home', cost:'-4 progress', effects:'Morale +1',
+          desc:'The humane choice. Also probably legally required.',
+          apply(s){s.morale+=1;s.onboardingProgress-=4;addLog('🏥 Sent Sharon home (with arrow). Team loved you for it. [Morale +1 | Progress -4]','log-p')} },
+        optB:{ label:'"Walk It Off"', cost:'None', effects:'Morale -3',
+          desc:'We\'re close to shipping. Sharon is very committed to the team.',
+          apply(s){s.morale-=3;addLog('💀 Told Sharon to walk it off. She did. While filing HR complaint. [Morale -3]','log-e')} }
+      }
+    ]
+  },
+  { id:6, title:'The Final Push',
+    situation:`This is it. The last sprint. Board presentation is Friday.\n\nYou look at your onboarding progress. You look at your team. A penguin looks back.\n\nThere is only one question: how do you cross the finish line?`,
+    sprite:'Images/Zombie.png',
+    guaranteedEvent:null,
+    decisions:[
+      { id:'d6_1', title:'The Final Approach',
+        desc:`You need to close the gap and hit 100%. The board is watching. How do you finish?`,
+        illustration:null,
+        optA:{ label:'AI Auto-Complete Everything', cost:'None', effects:'AI Score +2 | 50/50: bugs OR instant 100%',
+          desc:'Let the AI finish it. Could be beautiful. Could be a disaster.',
+          apply(s){s.aiScore+=2;if(Math.random()<.5){s.onboardingProgress-=15;addLog('💀 AI auto-complete hallucinated APIs. Nothing works. [AI +2 | Progress -15]','log-e')}else{s.onboardingProgress=Math.max(s.onboardingProgress,95);addLog('🎉 AI auto-complete worked! Somehow! [AI +2 | Progress → 95%+]','log-p')}} },
+        optB:{ label:'Manual Grind with Team', cost:'None', effects:'Dino Score +1 | Reliable',
+          desc:'The old way. Slow. Boring. Works. Your team respects you (a little).',
+          apply(s){s.dinoScore+=1;addLog('💪 Manual grind. Boring. Reliable. Your devs respect you. [Dino +1]','log-p')} }
+      },
+      { id:'d6_2', title:'The Phishing Training',
+        desc:`IT: "Mandatory phishing awareness training. 4 hours. Today. Demo day."\n\nSlide 1 of 47.`,
+        illustration:'phishingTraining',
+        optA:{ label:'Attend the Training', cost:'-5 progress', effects:'Compliance ✓',
+          desc:'Watch 47 slides about not clicking links. On demo day. In full.',
+          apply(s){s.onboardingProgress-=5;addLog('😴 Did phishing training. All asleep by slide 3. Compliant! [Progress -5]','log-w')} },
+        optB:{ label:'Skip It', cost:'None', effects:'Risk: 25% credential loss',
+          desc:'You\'re busy. You know not to click links. Probably.',
+          apply(s){if(Math.random()<.25){s.budget-=30000;s.onboardingProgress-=10;addLog('🎣 PHISHED! Lost credentials + $30k. [Budget -$30k | Progress -10]','log-e')}else addLog('✅ Skipped phishing training. No incidents. Lucky! []','log-p')} }
+      }
+    ]
+  }
+];
+
+// ============================================================
+// RANDOM EVENTS
+// ============================================================
+const RANDOM_EVENTS=[
+  { id:'hallucination', title:'AI Hallucination Alert', illustration:'aiHallucination',
+    desc:`Your AI authentication system has decided all passwords must be replaced with emoji sequences.\n\nUsers cannot log in. You spend a week debugging emoji authentication.\n\n→ Progress: -8`,
+    apply(s){s.onboardingProgress-=8;addLog('🤖 AI changed all passwords to emoji. Week of debugging. [Progress -8]','log-e')} },
+  { id:'penguin', title:'The Penguin Email', illustration:null,
+    desc:`You receive an email from the Penguin Welfare Foundation:\n\n"We are concerned about [PENGUIN NAME]\'s workplace stress indicators. The carbon footprint of your AI infrastructure is catastrophic."\n\nA penguin has stress-tweeted your company.\n\n→ Penguin: -1 | Morale: -1`,
+    apply(s){if(s.penguins>0){s.penguins--;triggerPenguinDeath();}s.morale-=1;addLog('🐧 Penguin resigned due to AI carbon guilt. 💔 [Penguins -1 | Morale -1]','log-pg')} },
+  { id:'zoom', title:'Zoom Apocalypse', illustration:null,
+    desc:`The AI scheduling assistant "optimized for maximum stakeholder alignment."\n\nResult: Six back-to-back all-hands meetings. 6 hours. Nothing decided.\n\n→ Progress: -4 | Morale: -1`,
+    apply(s){s.onboardingProgress-=4;s.morale-=1;addLog('😩 6 hours of meetings. Nothing shipped. Everyone destroyed. [Progress -4 | Morale -1]','log-e')} },
+  { id:'promptengineer', title:'The Prompt Engineer Hire', illustration:null,
+    desc:`HR just hired a "Senior Prompt Engineering Strategist" at a higher salary than your senior developers.\n\nThey gave a talk on "vibes-based AI orchestration." Your devs are furious.\n\n→ Morale: -2 | AI Score: +1`,
+    apply(s){s.morale-=2;s.aiScore+=1;addLog('😶 Prompt Engineer hired at $180k. Devs furious. You feel obsolete. [Morale -2 | AI +1]','log-e')} },
+  { id:'regulation', title:'EU AI Act Violation', illustration:'budgetCrisis',
+    desc:`Your lawyers inform you that your AI onboarding may violate EU AI Act Article 47-B (Automated Psychographic Profiling Without Adequate Disclosure).\n\nYou have two options.`,
+    hasChoice:true,
+    optA:{ label:'Remove the AI Feature', effects:'Progress -10',
+      apply(s){s.onboardingProgress-=10;addLog('⚖️ Removed the questionable AI feature. Lost 10% progress. [Progress -10]','log-e')} },
+    optB:{ label:'Pay the Lawyers ($40k)', effects:'Budget -$40k',
+      apply(s){s.budget-=40000;addLog('💰 Paid $40k in legal fees. Feature stays. [Budget -$40k]','log-e')} }
+  },
+  { id:'standup', title:'AI Standup Bot Strikes', illustration:null,
+    desc:`Someone set up an AI bot to write your standup updates. For you, it generated:\n\n"Chris has been strategically avoiding commitment to deliverables while maintaining stakeholder relationship equity."\n\nThe team found it hilarious. Your boss did not.\n\n→ Morale: -1`,
+    apply(s){s.morale-=1;addLog('😐 AI standup bot exposed you. Accurately. [Morale -1]','log-e')} },
+  { id:'outage', title:'Cloud Provider Down', illustration:null,
+    desc:`Your dev environment is hosted on CloudOptima. CloudOptima has gone offline.\n\nTheir status page: "✅ All Systems Operational."\n\nYou lose a full day.\n\n→ Progress: -5`,
+    apply(s){s.onboardingProgress-=5;addLog('☁️ Cloud provider down. Status page: "operational." Lies. [Progress -5]','log-e')} },
+  { id:'viral', title:'Accidental Viral Moment', illustration:null,
+    desc:`Your automated social media AI posted a behind-the-scenes of your scrum board. The chaos was deeply relatable.\n\n50k likes. A VC called. The board is thrilled.\n\n→ Progress: +5 | Morale: +1`,
+    apply(s){s.onboardingProgress+=5;s.morale+=1;addLog('🐦 Scrum board went viral. Chaos is on-brand. [Progress +5 | Morale +1]','log-p')} }
+];
+
+// ============================================================
+// MODAL EVENT QUEUE
+// ============================================================
+let modalQueue=[];
+let onModalContinue=null;
+
+function queueModal(config){modalQueue.push(config)}
+
+function processQueue(){
+  if(!modalQueue.length){afterAllModals();return}
+  const cfg=modalQueue.shift();
+  showModal(cfg);
+}
+
+function showModal(cfg){
+  const overlay=document.getElementById('modal-overlay');
+  const cvs=document.getElementById('modal-canvas');
+  const titleEl=document.getElementById('modal-title');
+  const descEl=document.getElementById('modal-desc');
+  const subEl=document.getElementById('modal-subtitle');
+  const optWrap=document.getElementById('modal-options-wrap');
+  const contWrap=document.getElementById('modal-continue-wrap');
+
+  // Reset
+  cvs.style.display='none';
+  optWrap.innerHTML='';
+  contWrap.style.display='none';
+  subEl.textContent='';
+
+  titleEl.textContent=cfg.title||'EVENT';
+  descEl.textContent=cfg.desc||'';
+
+  // Draw illustration
+  if(cfg.illustration){
+    cvs.style.display='block';
+    drawEventCanvas(cvs,cfg.illustration);
+  }
+
+  if(cfg.type==='decision'){
+    // Two option cards
+    const wrap=document.createElement('div');
+    wrap.className='modal-options';
+    [cfg.optA,cfg.optB].forEach((opt,i)=>{
+      const card=document.createElement('div');
+      card.className='opt-card';
+      card.innerHTML=`<h4>${opt.label}</h4>
+        <div class="opt-cost">${opt.cost||''}</div>
+        <div class="opt-effect">${opt.effects||''}</div>
+        <div class="opt-desc">${opt.desc||''}</div>
+        <button class="btn pick-btn ${i===0?'':'btn-y'}">${i===0?'▶ SELECT A':'▶ SELECT B'}</button>`;
+      card.querySelector('button').addEventListener('click',()=>{
+        opt.apply(GS);
+        updateDisplay();
+        const end=checkWinLose();
+        if(end){endGame(end);return}
+        hideModal();
+        processQueue();
+      });
+      wrap.appendChild(card);
+    });
+    optWrap.appendChild(wrap);
+
+  } else if(cfg.type==='randomDecision'){
+    // Same as decision but from random event
+    const wrap=document.createElement('div');
+    wrap.className='modal-options';
+    [cfg.optA,cfg.optB].forEach((opt,i)=>{
+      const card=document.createElement('div');
+      card.className='opt-card';
+      card.innerHTML=`<h4>${opt.label}</h4>
+        <div class="opt-effect">${opt.effects||''}</div>
+        <div class="opt-desc">${opt.desc||''}</div>
+        <button class="btn pick-btn ${i===0?'':'btn-y'}">${i===0?'▶ SELECT A':'▶ SELECT B'}</button>`;
+      card.querySelector('button').addEventListener('click',()=>{
+        opt.apply(GS);
+        updateDisplay();
+        const end=checkWinLose();
+        if(end){endGame(end);return}
+        hideModal();
+        processQueue();
+      });
+      wrap.appendChild(card);
+    });
+    optWrap.appendChild(wrap);
+
+  } else {
+    // Info modal — just continue
+    contWrap.style.display='block';
+    onModalContinue=()=>{
+      if(cfg.apply) cfg.apply(GS);
+      updateDisplay();
+      const end=checkWinLose();
+      if(end){endGame(end);return}
+      processQueue();
+    };
+  }
+
+  overlay.classList.add('open');
+}
+
+function hideModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function modalContinue(){
+  hideModal();
+  if(onModalContinue){const fn=onModalContinue;onModalContinue=null;fn();}
+}
+
+// ============================================================
+// GAME FLOW
+// ============================================================
+function startGame(){
+  initState();
+  document.getElementById('title').classList.remove('active');
+  document.getElementById('game').classList.add('active');
+  document.getElementById('end-screen').classList.remove('active');
+  resetSliders();
+  updateDisplay();
+  addLog('> Your journey begins. 6 sprints. Ship the onboarding. Survive.','log-n');
+  startSprint(1);
+}
+
+function startSprint(n){
+  GS.sprint=n;
+  GS.sprintLogStart=GS.eventLog.length;
+  const sp=SPRINTS[n-1];
+  resetSliders();
+
+  // Apply carry-over penalty from previous sprint
+  if(GS.pendingProgressPenalty>0){
+    GS.onboardingProgress=Math.max(0,GS.onboardingProgress-GS.pendingProgressPenalty);
+    addLog(`⚠️ Sprint ${n}: Carry-over penalty -${GS.pendingProgressPenalty}% (AI resignation fallout)`,'log-e');
+    GS.pendingProgressPenalty=0;
+  }
+
+  document.getElementById('pm-sprite').src=sp.sprite;
+  document.getElementById('sprint-label').textContent=`SPRINT ${n}/6`;
+  document.getElementById('sprint-title').textContent=sp.title.toUpperCase();
+  document.getElementById('situation-box').textContent=sp.situation;
+  document.getElementById('alloc-box').style.display='block';
+  document.getElementById('next-sprint-wrap').style.display='none';
+
+  addLog(`━━━ SPRINT ${n}/6: ${sp.title.toUpperCase()} ━━━`,'log-h');
+  updateDisplay();
+}
+
+function onSlider(cat,val){
+  val=parseInt(val);
+  const others=['ai','trad','debt','debug'].filter(k=>k!==cat)
+    .reduce((s,k)=>s+GS.allocation[k],0);
+  const max=20-others;
+  if(val>max) val=max;
+  GS.allocation[cat]=val;
+  document.getElementById(`sl-${cat}`).value=val;
+  document.getElementById(`sv-${cat}`).textContent=val;
+  const total=val+others;
+  const rem=20-total;
+  const remEl=document.getElementById('remaining-pts');
+  remEl.textContent=rem;
+  remEl.className=rem<0?'remain-bad':'remain-ok';
+  document.getElementById('submit-sprint-btn').disabled=(rem!==0);
+}
+
+function resetSliders(){
+  GS.allocation={ai:0,trad:0,debt:0,debug:0};
+  ['ai','trad','debt','debug'].forEach(k=>{
+    const sl=document.getElementById(`sl-${k}`);
+    if(sl) sl.value=0;
+    const sv=document.getElementById(`sv-${k}`);
+    if(sv) sv.textContent='0';
+  });
+  document.getElementById('remaining-pts').textContent='20';
+  document.getElementById('remaining-pts').className='remain-ok';
+  document.getElementById('submit-sprint-btn').disabled=true;
+}
+
+function submitSprint(){
+  const sp=SPRINTS[GS.sprint-1];
+  const {ai,trad,debt,debug}=GS.allocation;
+
+  // Calculate progress
+  const progressGain=Math.floor((ai*2.5)+(trad*1.5)+(debt*0.5));
+  GS.onboardingProgress=Math.min(100,GS.onboardingProgress+progressGain);
+
+  // Score changes
+  GS.aiScore=Math.min(10,GS.aiScore+Math.floor(ai/4));
+  GS.dinoScore=Math.min(10,GS.dinoScore+Math.floor(trad/4));
+  // Debug AI reduces aiScore slightly
+  GS.aiScore=Math.max(0,GS.aiScore-Math.floor(debug/5));
+
+  addLog(`📋 Allocated ${ai}AI / ${trad}Trad / ${debt}Debt / ${debug}Debug → Progress +${progressGain}%`,'log-n');
+  if(ai>0&&GS.aiScore>0) addLog(`🤖 AI Score: ${GS.aiScore}/10${GS.aiScore>=8?' ⚠️ DANGER':''}`,'log-w');
+  if(trad>0&&GS.dinoScore>0) addLog(`🦕 Dino Score: ${GS.dinoScore}/10${GS.dinoScore>=8?' ⚠️ DANGER':''}`,'log-w');
+
+  // Penguin risk from AI usage
+  if(ai>0&&Math.random()<0.1&&GS.penguins>0){
+    GS.penguins--;
+    triggerPenguinDeath();
+    addLog('🐧 AI training costs claimed another penguin. 💔 [Penguins -1]','log-pg');
+  }
+
+  updateDisplay();
+
+  // Check immediate win/lose after allocation
+  const earlyEnd=checkWinLose();
+  if(earlyEnd){endGame(earlyEnd);return}
+
+  // Hide allocation, prepare modal queue
+  document.getElementById('alloc-box').style.display='none';
+
+  // Build event queue
+  modalQueue=[];
+
+  // 1. Guaranteed event
+  if(sp.guaranteedEvent){
+    const ge=sp.guaranteedEvent;
+    queueModal({type:'info',title:ge.title,desc:ge.desc,illustration:ge.illustration,apply:ge.apply});
+  }
+
+  // 2. Decisions
+  sp.decisions.forEach(d=>{
+    queueModal({type:'decision',title:d.title,desc:d.desc,illustration:d.illustration,
+      optA:d.optA,optB:d.optB});
+  });
+
+  // 3. Mid-sprint event (Sprint 4)
+  if(sp.midSprintEvent&&Math.random()<sp.midSprintEvent.chance){
+    const ms=sp.midSprintEvent;
+    queueModal({type:'randomDecision',title:ms.title,desc:ms.desc,illustration:ms.illustration,
+      optA:ms.optA,optB:ms.optB});
+  }
+
+  // 4. Random event (10% chance)
+  if(Math.random()<0.1){
+    const re=RANDOM_EVENTS[Math.floor(Math.random()*RANDOM_EVENTS.length)];
+    if(re.hasChoice){
+      queueModal({type:'randomDecision',title:re.title,desc:re.desc,illustration:re.illustration,
+        optA:re.optA,optB:re.optB});
+    } else {
+      queueModal({type:'info',title:re.title,desc:re.desc,illustration:re.illustration,apply:re.apply});
+    }
+  }
+
+  // 5. Sprint end processing
+  queueModal({type:'info',title:`Sprint ${GS.sprint} Complete`,
+    desc:buildSprintSummary(),illustration:null,
+    apply:doSprintEndDecay});
+
+  processQueue();
+}
+
+function buildSprintSummary(){
+  const s=GS;
+  return `Sprint ${s.sprint} allocation processed.\n\nOnboarding: ${Math.round(s.onboardingProgress)}%\nAI Score: ${s.aiScore}/10\nDino Score: ${s.dinoScore}/10\nBudget: $${Math.round(s.budget/1000)}k\nMorale: ${s.morale}/10\nPenguins: ${s.penguins}/5\n\n${s.sprint<6?'Click CONTINUE to apply sprint costs.':'Click CONTINUE for the final results!'}`;
+}
+
+function doSprintEndDecay(){
+  // Apply per-sprint costs
+  GS.budget-=20000;
+  GS.morale=Math.max(0,GS.morale-1);
+  addLog(`💸 Sprint cost: Budget -$20k, Morale -1 | Now: $${Math.round(GS.budget/1000)}k, Morale ${GS.morale}/10`,'log-n');
+  updateDisplay();
+}
+
+function afterAllModals(){
+  // Called when modal queue is empty and no game over
+  const end=checkWinLose();
+  if(end){endGame(end);return}
+
+  if(GS.sprint>=6){
+    // Final sprint done
+    endGame(GS.onboardingProgress>=100?(GS.penguins===5?'penguinGuardian':'survivor'):'timeup');
+    return;
+  }
+
+  // Show next sprint button
+  document.getElementById('sprint-summary').textContent=`Sprint ${GS.sprint} complete! | Onboarding: ${Math.round(GS.onboardingProgress)}% | AI: ${GS.aiScore}/10 | Dino: ${GS.dinoScore}/10 | Budget: $${Math.round(GS.budget/1000)}k | Morale: ${GS.morale}/10 | 🐧 ${GS.penguins}/5`;
+
+  // Populate sprint event log preview (this sprint's entries, newest first)
+  const previewEl=document.getElementById('sprint-log-entries');
+  previewEl.innerHTML='';
+  const sprintEntries=GS.eventLog.slice(GS.sprintLogStart);
+  [...sprintEntries].reverse().forEach(e=>{
+    const d=document.createElement('div');
+    d.className=`log-line ${e.cls||'log-n'}`;
+    d.textContent=e.text;
+    previewEl.appendChild(d);
+  });
+
+  document.getElementById('next-sprint-wrap').style.display='block';
+}
+
+function advanceSprint(){
+  document.getElementById('next-sprint-wrap').style.display='none';
+  startSprint(GS.sprint+1);
+}
+
+// ============================================================
+// WIN / LOSE CHECK
+// ============================================================
+function checkWinLose(){
+  if(GS.aiScore>=10) return 'automated';
+  if(GS.dinoScore>=10) return 'dinosaur';
+  if(GS.budget<=0) return 'bankrupt';
+  if(GS.morale<=0) return 'teamCollapse';
+  if(GS.onboardingProgress>=100){
+    return GS.penguins===5?'penguinGuardian':'survivor';
+  }
+  return null;
+}
+
+// ============================================================
+// PENGUIN DEATH ANIMATION
+// ============================================================
+function triggerPenguinDeath(){
+  updateDisplay();// renders updated penguin count + swaps emoji to 💀
+  // Animate the newly-dead penguin slot
+  const icons=document.querySelectorAll('.pg-icon');
+  const idx=GS.penguins;// already decremented — this slot just turned 💀
+  if(icons[idx]){
+    icons[idx].classList.add('dying');
+    setTimeout(()=>icons[idx]&&icons[idx].classList.remove('dying'),600);
+  }
+}
+
+// ============================================================
+// UI RENDERING
+// ============================================================
+function updateDisplay(){
+  const s=GS;
+  const prog=Math.min(100,Math.max(0,s.onboardingProgress));
+
+  // Header
+  document.getElementById('h-sprint').textContent=`${s.sprint}/6`;
+  document.getElementById('h-prog').textContent=`${Math.round(prog)}%`;
+
+  const budgetEl=document.getElementById('h-budget');
+  budgetEl.textContent=`$${Math.round(s.budget/1000)}k`;
+  budgetEl.className='hsval'+(s.budget<50000?' danger':s.budget<100000?' warn':'');
+
+  const moraleEl=document.getElementById('h-morale');
+  moraleEl.textContent=`${s.morale}/10`;
+  moraleEl.className='hsval'+(s.morale<=2?' danger':s.morale<=4?' warn':'');
+
+  // Progress bar
+  document.getElementById('prog-fill').style.width=prog+'%';
+  document.getElementById('prog-lbl').textContent=Math.round(prog)+'%';
+
+  // AI score bar
+  const aiPct=(s.aiScore/10)*100;
+  const aiFill=document.getElementById('ai-fill');
+  aiFill.style.width=aiPct+'%';
+  aiFill.className='sbar-fill ai-color'+(s.aiScore>=8?' danger':s.aiScore>=6?' warn':'');
+  document.getElementById('ai-val').textContent=`${s.aiScore}/10`;
+
+  // Dino score bar
+  const dinoPct=(s.dinoScore/10)*100;
+  const dinoFill=document.getElementById('dino-fill');
+  dinoFill.style.width=dinoPct+'%';
+  dinoFill.className='sbar-fill dino-color'+(s.dinoScore>=8?' danger':s.dinoScore>=6?' warn':'');
+  document.getElementById('dino-val').textContent=`${s.dinoScore}/10`;
+
+  // Morale bar
+  const moraleFill=document.getElementById('morale-fill');
+  moraleFill.style.width=((s.morale/10)*100)+'%';
+  moraleFill.className='sbar-fill morale-color'+(s.morale<=2?' danger':s.morale<=4?' warn':'');
+
+  // Warning message
+  const warns=[];
+  if(s.aiScore>=8) warns.push('⚠️ AI SCORE CRITICAL');
+  if(s.dinoScore>=8) warns.push('⚠️ DINO SCORE CRITICAL');
+  if(s.morale<=3) warns.push('⚠️ MORALE CRITICAL');
+  if(s.budget<60000) warns.push('⚠️ BUDGET CRITICAL');
+  document.getElementById('warn-msg').textContent=warns.join(' | ');
+
+  // Penguins
+  const pgSlots=document.getElementById('pg-slots');
+  pgSlots.innerHTML='';
+  for(let i=0;i<5;i++){
+    const span=document.createElement('span');
+    span.className='pg-icon';
+    span.textContent=i<s.penguins?'🐧':'💀';
+    pgSlots.appendChild(span);
+  }
+  document.getElementById('pg-count').textContent=`${s.penguins}/5`;
+
+  // Log
+  const logEl=document.getElementById('log-entries');
+  logEl.innerHTML='';
+  [...s.eventLog].reverse().slice(0,40).forEach(e=>{
+    const d=document.createElement('div');
+    d.className=`log-line ${e.cls||'log-n'}`;
+    d.textContent=e.text;
+    logEl.appendChild(d);
+  });
+}
+
+function addLog(text,cls){
+  GS.eventLog.push({text,cls:cls||'log-n'});
+  // Live update log
+  const logEl=document.getElementById('log-entries');
+  if(logEl){
+    const d=document.createElement('div');
+    d.className=`log-line ${cls||'log-n'}`;
+    d.textContent=text;
+    logEl.insertBefore(d,logEl.firstChild);
+  }
+}
+
+// ============================================================
+// END GAME
+// ============================================================
+const ENDING_DATA={
+  automated:{
+    title:'AUTOMATED OUT',
+    color:'#FF4444',
+    message:'Your AI integration was so thorough that the AI replaced you. Your last Slack message was sent by a bot. The onboarding shipped. Without you.',
+    flavor:'"Thanks for getting us here," they said. "We\'ll take it from here." — The Board\n\nYour replacement: A $20/month API subscription.',
+    image:'Images/ending-automated.png',
+    canvas:'automated'
+  },
+  dinosaur:{
+    title:'TECHNOLOGICAL DINOSAUR',
+    color:'#FFFF00',
+    message:'You resisted AI so completely that the industry passed you by. Your LinkedIn now says "Open to Opportunities." The prospects are bleak.',
+    flavor:'"Your skills are no longer relevant to our AI-first culture." — Exit Interview\n\nYou now give "digital transformation" talks at conferences. 3 people attended.',
+    image:'Images/ending-dinosaur.png',
+    canvas:'dinosaur'
+  },
+  bankrupt:{
+    title:'BANKRUPT',
+    color:'#FFFF00',
+    message:'The startup ran out of money. The office is empty. The servers were repossessed. The domain sold for $8 on GoDaddy.',
+    flavor:'"We\'re reallocating resources to AI." — The CFO\n\nThe CEO is already at a new company. He\'s "disrupting the disruption space."',
+    image:'Images/ending-bankrupt.png',
+    canvas:'bankrupt'
+  },
+  teamCollapse:{
+    title:'MASS RESIGNATION',
+    color:'#FF4444',
+    message:'Your entire team quit. They left a note: "Good luck." One dev joined a competitor. One became a yoga instructor. One just disappeared.',
+    flavor:'"0/5 stars. The PM described the coffee machine as AI-powered." — Glassdoor\n\nYou\'re alone with 42% of an onboarding flow and no one to finish it.',
+    image:'Images/ending-teamcollapse.png',
+    canvas:'teamCollapse'
+  },
+  survivor:{
+    title:'SURVIVOR',
+    color:'#00FF00',
+    message:'You shipped it. It\'s not pretty. It\'s not perfect. But it exists and it works-ish. The board is... placated.',
+    flavor:'"Good work. Next quarter we\'re pivoting to blockchain AI." — The CEO\n\nYou survived. For now. Welcome to the treadmill.',
+    image:'Images/ending-survivor.png',
+    canvas:'survivor'
+  },
+  penguinGuardian:{
+    title:'PENGUIN GUARDIAN',
+    color:'#00FFFF',
+    message:'You shipped the product AND kept all five penguins alive! The penguins have crowned you their guardian. The onboarding won a design award.',
+    flavor:'"HONORARY PENGUIN — Defender of Ice"\n\nAchievement unlocked: The PM who actually gave a @#$% about the penguins.',
+    image:'Images/ending-penguin-guardian.png',
+    canvas:'penguinGuardian'
+  },
+  timeup:{
+    title:'TIME\'S UP',
+    color:'#FF4444',
+    message:'Six sprints. Not enough. The board presentation was today. You showed up with an unfinished product and a lot of excuses.',
+    flavor:'"We had alignment issues." — You, in every retrospective\n\nThe company pivoted to something else the following week.',
+    image:'Images/ending-bankrupt.png',
+    canvas:'bankrupt'
+  }
+};
+
+function endGame(type){
+  GS.gameOver=true;
+  hideModal();
+
+  const data=ENDING_DATA[type]||ENDING_DATA.timeup;
+  document.getElementById('game').classList.remove('active');
+  document.getElementById('end-screen').classList.add('active');
+
+  // Show ending image (real image preferred, fallback to canvas)
+  const imgEl=document.getElementById('end-img');
+  const cvs=document.getElementById('end-canvas');
+  if(data.image){
+    imgEl.src=data.image;
+    imgEl.style.display='block';
+    cvs.style.display='none';
+  } else {
+    imgEl.style.display='none';
+    cvs.style.display='block';
+    drawEndingCanvas(cvs,data.canvas);
+  }
+
+  const titleEl=document.getElementById('end-title');
+  titleEl.textContent=data.title;
+  titleEl.style.color=data.color;
+  titleEl.style.textShadow=`0 0 12px ${data.color}`;
+
+  document.getElementById('end-message').textContent=data.message;
+  document.getElementById('end-flavor').textContent=data.flavor;
+
+  const statsBox=document.getElementById('end-stats-box');
+  statsBox.innerHTML=`
+    <div>📦 Onboarding: <strong>${Math.round(GS.onboardingProgress)}%</strong></div>
+    <div>🤖 AI Score: <strong>${GS.aiScore}/10</strong></div>
+    <div>🦕 Dino Score: <strong>${GS.dinoScore}/10</strong></div>
+    <div>💰 Budget Remaining: <strong>$${Math.round(GS.budget/1000)}k</strong></div>
+    <div>😰 Final Morale: <strong>${GS.morale}/10</strong></div>
+    <div>🐧 Penguins Saved: <strong>${GS.penguins}/5</strong> ${GS.penguins===5?'👑':GS.penguins===0?'😢':''}</div>
+    <div>🏃 Sprints Survived: <strong>${GS.sprint}/6</strong></div>
+  `;
+
+  addLog(`▸ GAME OVER: ${data.title}`,'log-h');
+}
+
+function showFinalLog(){
+  // Toggle showing the full log in a modal
+  const allLog=GS.eventLog.map(e=>e.text).join('\n');
+  queueModal({type:'info',title:'FULL EVENT LOG',
+    desc:allLog.slice(0,1200)+(allLog.length>1200?'\n\n[...and more]':''),
+    illustration:null,apply:null});
+  modalQueue=[];// clear queue first
+  processQueue();
+}
+
+function showInstructions(){
+  queueModal({type:'info',
+    title:'HOW TO PLAY',
+    desc:`Each sprint, allocate 20 story points:\n\n🤖 AI Tools → Fast progress, raises AI Score\n👨‍💻 Traditional code → Reliable, raises Dino Score\n🔧 Tech Debt → Prevents disasters\n🐛 Debug AI → Lowers AI Score slightly\n\nFail conditions:\n• AI Score ≥ 10: Automated Out\n• Dino Score ≥ 10: Technological Dinosaur\n• Budget ≤ $0: Bankrupt\n• Morale ≤ 0: Team Collapse\n\nWin condition:\n• Onboarding reaches 100%\n\nSecret ending:\n• Win with all 5 penguins alive 🐧\n\nTip: Stay balanced — aim for 5-8 AI points, 5-8 Traditional per sprint.`,
+    illustration:null, apply:null});
+  processQueue();
+}
+
+
+</script>
+</body>
+</html>
