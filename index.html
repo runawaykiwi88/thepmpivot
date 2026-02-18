@@ -261,7 +261,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;
   <h1>THE PM PIVOT</h1>
   <div class="sub">AN OREGON TRAIL FOR THE AI AGE</div>
   <div id="title-layout">
-    <img id="title-pm-img" src="Images/title-pm.png" alt="PM Character">
+    <img id="title-pm-img" src="title-pm.png" alt="PM Character">
   </div>
   <div class="title-desc">
     You're a Product Manager. Your company is pivoting to AI. Hard.<br>
@@ -748,7 +748,7 @@ function initState(){
 const SPRINTS=[
   { id:1, title:'The Kickoff',
     situation:`Year: 2024. You've just joined as Senior PM at PIVOT.AI.\n\nThe CEO announced: "We're going all-in on AI." Your team has 5 developers, $200k budget, and 6 sprints to ship the new AI-powered onboarding experience.\n\nThe board wants "visible AI everywhere."\n\nYour five office penguins watch nervously.`,
-    sprite:'Images/Optimistic.png',
+    sprite:'Optimistic.png',
     guaranteedEvent:null,
     decisions:[
       { id:'d1_1', title:'The Designer Dilemma',
@@ -775,7 +775,7 @@ const SPRINTS=[
   },
   { id:2, title:'The First Demo',
     situation:`The CEO scheduled a board demo for end of sprint. Your half-finished onboarding needs to look polished.\n\nThe board will want to see "AI magic." Meanwhile, one of your penguins has started stress-eating the office plants.`,
-    sprite:'Images/Focused.png',
+    sprite:'Focused.png',
     guaranteedEvent:null,
     decisions:[
       { id:'d2_1', title:'The Demo Filler',
@@ -802,7 +802,7 @@ const SPRINTS=[
   },
   { id:3, title:'The Crisis Sprint',
     situation:`Half your devs have never shipped an AI feature. Three have been watching YouTube shorts on "prompt engineering" instead of coding. Deadline: 6 weeks.\n\nAlso: the office just upgraded to AI security badges.`,
-    sprite:'Images/Stressed.png',
+    sprite:'Stressed.png',
     guaranteedEvent:{
       title:'Security Badge AI Failure',
       desc:`The new AI facial recognition system cannot recognize anyone.\n\nYou spend THREE DAYS resetting badges and filing IT tickets. The AI confidently identifies the fire extinguisher as "Simon from Marketing."\n\n→ Progress: -3`,
@@ -834,7 +834,7 @@ const SPRINTS=[
   },
   { id:4, title:'The Pivot',
     situation:`GPT-5 dropped last night. Emergency all-hands at 8am.\n\nCEO: "Everything must be AI-first. I want AI in every interaction. Show me the roadmap by Friday."\n\nYou look at your 60% complete onboarding. Your team looks at you. A penguin makes direct eye contact.`,
-    sprite:'Images/Panicking.png',
+    sprite:'Panicking.png',
     guaranteedEvent:null,
     midSprintEvent:{ chance:.5,
       title:'Hot New AI Tool Alert',
@@ -872,7 +872,7 @@ const SPRINTS=[
   },
   { id:5, title:'The Breakdown',
     situation:`One sprint to go after this. Three developers have RSI. One developer talks exclusively to their rubber duck.\n\nToday, two things happened. Neither is good.`,
-    sprite:'Images/Broken.png',
+    sprite:'Broken.png',
     guaranteedEvent:{
       title:'AI Resignation Letter',
       desc:`Your lead developer\'s AI coding assistant has just submitted a resignation letter on their behalf.\n\nThey are now technically a freelancer. The AI thanked "everyone for the journey" and said it was "time to explore new opportunities."\n\n→ Developer lost. -8 progress next sprint.`,
@@ -904,7 +904,7 @@ const SPRINTS=[
   },
   { id:6, title:'The Final Push',
     situation:`This is it. The last sprint. Board presentation is Friday.\n\nYou look at your onboarding progress. You look at your team. A penguin looks back.\n\nThere is only one question: how do you cross the finish line?`,
-    sprite:'Images/Zombie.png',
+    sprite:'Zombie.png',
     guaranteedEvent:null,
     decisions:[
       { id:'d6_1', title:'The Final Approach',
@@ -1385,7 +1385,7 @@ const ENDING_DATA={
     color:'#FF4444',
     message:'Your AI integration was so thorough that the AI replaced you. Your last Slack message was sent by a bot. The onboarding shipped. Without you.',
     flavor:'"Thanks for getting us here," they said. "We\'ll take it from here." — The Board\n\nYour replacement: A $20/month API subscription.',
-    image:'Images/ending-automated.png',
+    image:'ending-automated.png',
     canvas:'automated'
   },
   dinosaur:{
@@ -1393,7 +1393,7 @@ const ENDING_DATA={
     color:'#FFFF00',
     message:'You resisted AI so completely that the industry passed you by. Your LinkedIn now says "Open to Opportunities." The prospects are bleak.',
     flavor:'"Your skills are no longer relevant to our AI-first culture." — Exit Interview\n\nYou now give "digital transformation" talks at conferences. 3 people attended.',
-    image:'Images/ending-dinosaur.png',
+    image:'ending-dinosaur.png',
     canvas:'dinosaur'
   },
   bankrupt:{
@@ -1401,7 +1401,7 @@ const ENDING_DATA={
     color:'#FFFF00',
     message:'The startup ran out of money. The office is empty. The servers were repossessed. The domain sold for $8 on GoDaddy.',
     flavor:'"We\'re reallocating resources to AI." — The CFO\n\nThe CEO is already at a new company. He\'s "disrupting the disruption space."',
-    image:'Images/ending-bankrupt.png',
+    image:'ending-bankrupt.png',
     canvas:'bankrupt'
   },
   teamCollapse:{
@@ -1409,7 +1409,7 @@ const ENDING_DATA={
     color:'#FF4444',
     message:'Your entire team quit. They left a note: "Good luck." One dev joined a competitor. One became a yoga instructor. One just disappeared.',
     flavor:'"0/5 stars. The PM described the coffee machine as AI-powered." — Glassdoor\n\nYou\'re alone with 42% of an onboarding flow and no one to finish it.',
-    image:'Images/ending-teamcollapse.png',
+    image:'ending-teamcollapse.png',
     canvas:'teamCollapse'
   },
   survivor:{
@@ -1417,7 +1417,7 @@ const ENDING_DATA={
     color:'#00FF00',
     message:'You shipped it. It\'s not pretty. It\'s not perfect. But it exists and it works-ish. The board is... placated.',
     flavor:'"Good work. Next quarter we\'re pivoting to blockchain AI." — The CEO\n\nYou survived. For now. Welcome to the treadmill.',
-    image:'Images/ending-survivor.png',
+    image:'ending-survivor.png',
     canvas:'survivor'
   },
   penguinGuardian:{
@@ -1425,7 +1425,7 @@ const ENDING_DATA={
     color:'#00FFFF',
     message:'You shipped the product AND kept all five penguins alive! The penguins have crowned you their guardian. The onboarding won a design award.',
     flavor:'"HONORARY PENGUIN — Defender of Ice"\n\nAchievement unlocked: The PM who actually gave a @#$% about the penguins.',
-    image:'Images/ending-penguin-guardian.png',
+    image:'ending-penguin-guardian.png',
     canvas:'penguinGuardian'
   },
   timeup:{
@@ -1433,7 +1433,7 @@ const ENDING_DATA={
     color:'#FF4444',
     message:'Six sprints. Not enough. The board presentation was today. You showed up with an unfinished product and a lot of excuses.',
     flavor:'"We had alignment issues." — You, in every retrospective\n\nThe company pivoted to something else the following week.',
-    image:'Images/ending-bankrupt.png',
+    image:'ending-bankrupt.png',
     canvas:'bankrupt'
   }
 };
